@@ -46,3 +46,14 @@ norm_01<- function(x) (x-min(x))/(max(x)-min(x)) #Vector normalization function
 
 ```
 
+
+# Bulleted Slide Title
+
+- Bullet 1
+- Bullet 2
+- Bullet 3
+
+## Secondary Header
+
+### Tertiary Header
+

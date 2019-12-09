@@ -1,0 +1,73 @@
+---
+title: "TITLE"
+author: "Erin Gilbert"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_float: True
+    toc_depth: 4
+    fig_retina: 2
+    number_sections: False
+    highlight: zenburn
+    theme: flatly
+---
+# Define Environment and Functions
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#Commonly Used Packages
+require(DT)
+require(raster)
+require(rgdal)
+require(EBImage)
+require(rjson)
+
+
+##Commonly Used Functions
+rep.col<-function(x,n){ #Repeat a row
+   matrix(rep(x,each=n), ncol=n, byrow=TRUE)
+}
+rep.row<-function(x,n){ #Repeat a column
+   matrix(rep(x,each=n),nrow=n)
+}
+rsq <- function (x, y) cor(x, y) ^ 2 # function to calculate R2
+calc_ndsi <- function (x, y) (x-y)/(x+y) # function to calculate NDSI
+norm_01<- function(x) (x-min(x))/(max(x)-min(x)) #Vector normalization function
+```
+
+
+# Load All the Data   
+```{r}
+
+```
+
+
+# Any background notes about the project 
+
+# Creating Tabs under Header {.tabset}
+
+## Tab 1
+## Tab 2
+
+# Including Emails
+```{}
+To:
+From:
+Date:
+Subject:
+
+
+Body
+
+
+```
+
+# Including Images
+![](/PATH/TO/IMAGE)
+
+# Including formulas
+$$\frac{Numerator}{Denominator}$$
+ $$Min< Y < X < Max$$
+ 
