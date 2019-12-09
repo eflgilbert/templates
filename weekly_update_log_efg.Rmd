@@ -1,0 +1,1087 @@
+---
+title: "EFG Weekly Update Log"
+author: "Erin Gilbert"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_float: True
+    toc_depth: 4
+    fig_retina: 2
+    number_sections: False
+    highlight: zenburn
+    theme: flatly
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Updates for Year 2018
+
+## July 2-6
+<pre>
+Hi Cory,
+
+Sorry this is late, I literally fell asleep over my dinner last night, but I got to sleep in this morning!
+
+Here is my update for this week.
+
+SDS/BSR Project
+Last week’s goals:
+		- <s>Run cart on A8 and small grains Friday</s> <b> Done. Was very fun.</b>
+		- <s>Do handheld measurements in Rosemount on Thursday (Hopefully the Kurle Lab handheld will be in)</s> <b> Done. Kurle handheld wasn’t in yet.</b>
+	- Work with stressed plant tissue
+		- <s>See if pixel labels can be transferred and combined from different users</s> <b> They can, but exporting the pixels is still unstable</b>
+	
+Next week’s goals:
+	- Field Growth Chamber
+		- Handheld in Rosemount on Thursday (Hopefully the Kurle Lab handheld will be in)
+		- Scan growth chamber BSR plants on indoor scanner on Friday
+	- Work with stressed plant tissue
+		- Have Khoa look at the cart scans from Friday, July 6th, to see if we need to make any adjustments with the cart
+		- Try to run some code to work with the successfully labeled rgb images we got from the pixel labeling
+		- See if existing pipelines can identify plants in the pseudo rgb images
+		
+
+
+PhD Progress Overall
+Last week’s goals:
+	- Track down Don Wyse to ask about seminar attendance <b>He is harder to track than I thought</b>
+	- <s>Plan work accordingly because Wednesday is a day off, so I only have 4 days to work with. </s> <b>Got through almost everything I wanted to do lab-wise</b>
+
+Next week’s goals:
+	- Lab meeting presentation on publication chosen by Cory
+	- Track down Don Wyse to ask about seminar attendance
+	- Start thinking about my thesis proposal and make a list of what I can do to try to get started early on some other chapters that will take a while to complete.
+
+
+
+Master’s Publication
+Last week’s goals:
+	- <s>Meet with Ben on Thursday (talk specifically about figures for the final publication) </s> <b>Field work got in the way but we caught up over email</b>
+	- Double check recurrent and donor parent info <b>Almost done</b>
+	- Run code with double checked input files <b>Will run over weekend</b>
+
+Next week’s goals:
+	- Run code with double checked lines
+	- Meet with Ben on Thursday (talk specifically about figures for the final publication) 
+
+
+Extracurriculars (<font color="red">during work hours</font>, <font color="blue">outside work hours</font>): <font color="red">Doctor’s appointment</font> (Wednesday,1.5 hrs), <font color="blue">CFANS Alumni Society Golf Scramble </font>(Friday, 2hrs), <font color="red">CFANS GSB meeting </font>(Friday, 2 hrs)
+
+Thanks!
+Erin
+
+On Jul 9, 2018, at 9:14 AM, Cory Hirsch <cdhirsch@umn.edu> wrote:
+Hi Erin,
+Thank you for the update. 
+
+Regarding tracking Don down, just send him an email briefly stating what you want to talk to him about and set up a meeting. Trying to just find him isn’t a good use of your time. Hopefully you can just do it over email and never even need to spend time meeting with him.
+
+Rosemount: If the Kurle lab hyperspec is here this week or if not, I would like you to start taking 2 measurements from each plant. We talked before about the tissue to select (top 3rd of plant so it isn’t a senescing leaf and not from the very top so it is a not a super young leaf). We want the tissue to be as close in develop as possible throughout time so we aren’t just picking up life stage changes. Because of this variation I think it is important to get 2 readings from each plant.
+
+Hyperspectral Images: We have got to get this moving somehow. We have spent too much time (a year) on this type of data to not have any data analysis done. We are not completing deliverables for sponsored projects that are paying both you and me and that needs to change or we will not keep getting money. You really need to focus as much effort as you can to segmentation from hyperspectral images. As we talked last week, work with the small set of annotated images from MatLab to see if this is a promising technique. It seems very unstable and might not scale for us well, but you have invested some time so lets give it a fair shake. Also, how much experience with PlantCV did you get from Phenome last year? I’ve talked to Malia and we might want to try it with your RGB images to have it do the segmentation for you. They have a naive bayes classifier that might work for our needs. Look into this this week and see if we can start to implement this technique. Lets talk about this though early this week. It might be a more user-friendly machine learning technique than MatLab’s. Main theme: we need to complete this as soon as we can. I’m really hoping in the next week or two this is a resolved issue. 
+
+Thesis proposal: See above (hyperspectral images). We need to get this images segmented before anything else. Once that is satisfactorily done then you can move on to thinking about other projects.
+
+Master’s thesis: Finishing projects will always be frustrating, but it is something that you need to do, not only for yourself to show an output to people, but also to show collaborators that you finish projects that you started. How you get to that completion though varies. If you are varying on what work needs to be done then you need to communicate that with Ben. Tell him your thoughts and listen to why he thinks you need to redo everything. I also really think you need to explain to him that this isn’t your main focus anymore and you can only spend X amount (let me know if you need me to fill in this X for you) of hours a week on completing this. You need to convey that if he wants all this redone it is going to take time and not get done right away. You have other responsibilities you need to balance. Explain to him your thoughts and go from there. We can talk about this more in person if you would like.
+
+Extracurriculars: So you are basically not around Friday, do you not only have GSB meetings during the academic semesters?
+
+Lets touch base early this week before you go to Rosemount for a day and aren’t really around Friday so you can be as productive as possible in the limited hours you have this week to work on your thesis data analysis.
+
+Cory
+</pre>
+
+## June 25-29th
+<pre>
+Hi Cory,
+
+Here is my update for this week.
+
+SDS/BSR Project
+Last week’s goals:
+	- Field Growth Chamber
+		- <s>Check on status of cart</s> <b> Software has been updated and we should be able to use cart on Friday with some adjustments</b>
+		- <s>Try to schedule using cart later in the week</s> <b> Had to push to next week</b>
+		- <s>Do handheld measurements if can’t get cart</s> <b> Got swamped with other things and it was also ungodly hot</b>
+	- Work with stressed plant tissue
+		- <s>Pixel labeling party</s> <b> There were a lot of issues getting started with different versions of MATLAB and license use issues.</b>
+		- <s>See if pixel labels can be transferred and combined from different users</s> <b> Unfortunately the pixel exportation seems to be completely unstable for the plant pixels. We might have to think about whether we can actually use this method or not.</b>
+	
+Next week’s goals:
+	- Field Growth Chamber
+		- Run cart on A8 and small grains Friday
+		- Do handheld measurements in Rosemount on Thursday (Hopefully the Kurle Lab handheld will be in)
+	- Work with stressed plant tissue
+		- Pixel labeling party
+		- See if pixel labels can be transferred and combined from different users
+
+
+PhD Progress Overall
+Last week’s goals:
+	- <s>Focus on plant pixel extraction </s> <b> Put to-do list for other projects on hold</b>
+	- <s>Do sexual misconduct training and make sure it’s all turned in</s> <b> Double checked it on Canvas</b>
+
+Next week’s goals:
+	- Track down Don Wyse to ask about seminar attendance
+	- Plan work accordingly because Wednesday is a day off, so I only have 4 days to work with.
+
+
+
+Master’s Publication
+Last week’s goals:
+	- <s>Meet with Ben on Thursday</s> <b>  Had a quick meeting because I was swamped with double checking the massive spreadsheet</b>
+	- Double check recurrent and donor parent info</s> <b> This is unwieldy but Ben gave me some good resources to fill in the blanks on the rest of the ones I need to double check</b>
+
+Next week’s goals:
+	- Meet with Ben on Thursday (talk specifically about figures for the final publication)
+	- Double check recurrent and donor parent info
+	- Run code with double checked input files
+
+
+Extracurriculars (<font color="red">during work hours</font>, <font color="blue">outside work hours</font>): <font color="red">Dentist </font>(Tuesday,1.5 hr), <font color="red">4th of July is holiday </font>(Wednesday)
+
+Thanks!
+Erin
+
+</pre>
+
+## June 17th-22nd
+<pre>
+Hi Cory,
+
+Here is my update for the week before last.
+
+SDS/BSR Project
+Last week’s goals:
+- Field Growth Chamber
+		- <s>Check on status of cart</s> <b> Needs a software update</b>
+		- <s>Try to schedule using cart on Thursdays</s> <b> Scheduling is going to be dynamic because of multiple projects and labs using it</b>
+		- <s>Indoor data collection on Wednesday and Friday</s> <b>  Done
+	- Work with stressed plant tissue</b>
+		- <s>Debug the pixel labeling exporting issue</s> <b> I figured out that I could export them one at a time.</b>
+		- Finish the machine learning code in MATLAB to see if 20 images is all it needs to learn what plants are</s> <b> Going to see if I can get useful info from the pixel labeling the undergrads will do</b>
+	
+Next week’s goals:
+	- Field Growth Chamber
+		- Check on status of cart
+		- Try to schedule using cart later in the week
+		- Do handheld measurements if can’t get cart
+	- Work with stressed plant tissue
+		- Pixel labeling party
+		- See if pixel labels can be transferred and combined from different users
+
+
+PhD Progress Overall
+Last week’s goals: <b>So a lot of this stuff is going to be put on hold (see email chain from previous week’s update)</b>
+	- Meet more with Cory
+	- Crop out bright table cloth on RNASeq data
+	- See if I can extract corn leaf pixels
+
+Next week’s goals:
+	- Focus on plant pixel extraction 
+	- Do sexual misconduct training and make sure it’s all turned in
+
+
+
+Master’s Publication
+Last week’s goals:
+	- <s>Meet with Ben on Thursday</s> <b>  Had a quick meeting because I was swamped with double checking the massive spreadsheet</b>
+	- Double check recurrent and donor parent info
+
+Next week’s goals:
+	- Meet with Ben on Thursday
+	- Double check recurrent and donor parent info
+	- Set old code up to be parallelized
+
+
+Extracurriculars (<font color="red">during work hours</font>, <font color="blue">outside work hours): <font color="red">Lunch Meeting with Etty Devos </font>(Monday, 2 hr), <font color="red">Drs. Appointment </font>(Wednesday 1hr)
+
+Thanks!
+Erin
+
+
+
+</pre>
+
+## June 11th-15th
+<pre>
+Hi Cory,
+
+Here is my update for the week.
+
+SDS/BSR Project
+Last week’s goals:
+	- Field/Growth Chamber
+		- <s>Stake and Plant A8S</s> <b>Done on Monday</b>
+		- <s>Scan BSR growth chamber </s> <b>Done on Friday</b>
+		- <s>Talk to Kurle lab about using handheld in greenhouse SDS trial</s> <b>Scanned on Wednesday</b>
+		- <s>Come up with scanning schedule for Rosemount</s> <b>Scheduled for Tuesdays</b>
+	- Work with stressed plant tissue
+		- <s>Color in 20 images to start</s> <b>Done. Took about 3-4 hours</b>
+		- <s>Test the machine learning app in MATLAB to see if 20 images is all it needs to learn what plants are</s> <b>Started writing the code. Still debugging some of the image label app.</b>
+		- Color in more images as needed and re-run MATLAB app <b>Haven’t needed to so far</b>
+	
+Next week’s goals:
+	- Field Growth Chamber
+		- Check on status of cart
+		- Try to schedule using cart on Thursdays
+		- Indoor data collection on Wednesday and Friday 
+	- Work with stressed plant tissue
+		- Debug the pixel labeling exporting issue
+		- Finish the machine learning code in MATLAB to see if 20 images is all it needs to learn what plants are 
+		- Work with stressed plant tissue
+
+
+PhD Progress Overall
+Last week’s goals:
+	- <s>Go over notes for Sarah’s transcriptomics project again and see where I can do some stuff here and there to get ready</s> <b>Notes are just the schedule of scanning. I should track down the scans and see if I can plot some stuff out. I should also look into cropping out the bright table cloth stuff.</b>
+
+Next week’s goals:
+	- Meet more with Cory
+	- Crop out bright table cloth on RNASeq data
+	- See if I can extract corn leaf pixels
+
+
+
+Master’s Publication
+Last week’s goals:
+	- <s>Double check lines and traits for each line including the new traits</s> <b>Done</b>
+	- Set up task array and rerun code with double checked data <b>Going to have to put on hold for a while</b>
+	- <s>Meet with Ben on Tuesday</s> <b>Met on Thursday</b>
+
+Next week’s goals:
+	- Meet with Ben on Thursday
+	- Double check recurrent and donor parent info
+
+
+Extracurriculars (<font color="red">during work hours</font>, <font color="blue">outside work hours</font>): <font color="red">Lunch with Peter Morrell</font> (Monday, 1.5 hr), <font color="red">Orthodontist</font> (Tuesday 2hr), <font color="blue">CFANS Alumni Society Golf Scramble Meeting </font>(Tuesday, 1.5hr), <font color="blue">Intramural Softball </font>(Wednesday, 2hr)
+
+Thanks!
+Erin
+</pre>
+
+## June 4th-8th
+
+<pre>
+Hi Cory,
+
+Here is my update for the week.
+
+SDS/BSR Project
+Last week’s goals:
+- Field/Growth Chamber
+	- <s>Plant Rosemount on Monday</s> <b> Completed on Monday.</b> 
+	- <s>Inoculate the BSR growth chamber round 2</s> <b> Completed on Tuesday</b> 
+	- Come up with scanning schedule for BSR growth chamber round 2</s> <b> I have a tentative schedule, but the machine is broken</b> 
+	- <s>Ask Evan about his scanning schedule and come up with calendar for scheduling machine</s> <b> Created a dedicated calendar</b> 
+- Work with stressed plant tissue
+	- Look to see if I can have Sydney help me with training a machine learning model for identifying plants <b>We didn’t get a chance to interact this week. I will probably do the model training on my own</b> 
+	- <s>Make training set for machine learning</s> <b> Made RGBs of all the hyperspec scans we have so far the way we can have training and testing sets</b> 
+	- New Goal: <s>Talk with Roman about machine earning</s> <b> He said my plan with Matlab should work well.</b> 
+	- New Goal: <s>Talk with Khoa about field images</s> <b> He had trouble identifying individual plots and I had to help him by looking at the RGB images and determining which way was south because of the sun/shadows.</b> 
+	
+
+Next week’s goals:
+- Field/Growth Chamber
+	- Stake and Plant A8S 
+	- Scan BSR growth chamber
+	- Talk to Kurle lab about using handheld in greenhouse SDS trial
+	- Come up with scanning schedule for Rosemount
+- Work with stressed plant tissue
+	- Color in 20 images to start
+	- Test the machine learning app in MATLAB to see if 20 images is all it needs to learn what plants are
+	- Color in more images as needed ad re-run MATLAB app
+
+
+PhD Progress Overall
+Last week’s goals:
+	- <s>Get committee submitted</s> <b> Done. Kevin Smith is my committee chair</b>
+	- <s>Put all my code on GitHub</s> <b> Put ally code including my notes</b>
+	- Go over notes for Sarah’s transcriptomics project again and see where I can do some stuff here and there to get ready </s> <b>Didn’t get to this</b> 
+
+Next week’s goals:
+	- Go over notes for Sarah’s transcriptomics project again and see where I can do some stuff here and there to get ready
+
+
+
+Master’s Publication
+Last week’s goals:
+	- <s>Double check lines and traits for each line (in an excel spreadsheet Ben gave me)</s> <b>Ben added some traits so I have to redo this step this week</b> 
+	- Set up task array and rerun code with double checked data <b>Didn’t get to this</b> 
+	- <s>Meet with Ben on Tuesday</s> 
+Next week’s goals:
+	- Double check lines and traits for each line including the new traits
+	- Set up task array and rerun code with double checked data 
+	- Meet with Ben on Tuesday 
+
+
+Extracurriculars (<font color="red">during work hours</font>, <font color="blue">outside work hours</font>): <font color="red">GSB meeting </font>(Tuesday 2hr), <font color="red">Dept coffee </font>(Wednesday, 1hr), <font color="blue">Intramural Softball </font>(Wednesday, 2hr)
+
+Thanks!
+Erin
+</pre>
+
+## May 28- June 1
+<pre>
+Hi Cory,
+
+Here is my update for the week.
+
+SDS/BSR Project
+Last week’s goals:
+- Field
+	- Work with stressed plant tissue
+		- <s>Decide whether k-means clustering is worth it</s> <b>Going to go with machine learning</b>
+		- <s>Look to see if I can have Sydney help me with training a machine learning model for identifying plants</s> <b>Will have to plan around her new schedule</b>
+	- <s>Stake</s> and plant <s>Rosemount field</s> <b>Done</b>
+	- Inoculate the BSR growth chamber round 2 <b>Inoculated A8S plants instead</b>
+
+Next week’s goals:
+- Field/Growth Chamber
+	- Plant Rosemount on Monday
+	- Inoculate the BSR growth chamber round 2
+	- Come up with scanning schedule for BSR growth chamber round 2
+	- Ask Evan about his scanning schedule and come up with calendar for scheduling machine
+- Work with stressed plant tissue
+	- Look to see if I can have Sydney help me with training a machine learning model for identifying plants
+	- Make training set for machine learning
+	
+
+
+PhD Progress Overall
+- Get committee submitted, if not, figure out why my GPAS hasn’t been approved. <b>Didn’t get approval until today, so I will do this Monday.</b>
+- <s>Start meeting with Ben so I can get my Masters’ thesis published</s> <b>Looks like there is some analysis to do to double check some things, but the writing is looking pretty complete. Ben wants to get it ready in a month or so.</b>
+- <s>Think about other projects I can get involved with (Sarah’s transcriptomics, etc.)</s> <b> I can look over the transcriptomics stuff again for Sarah and see if I have time. I want to focus on busting out my Master’s publication though.</b>
+
+Next week’s goals:
+- Get committee submitted
+- Put all my code on GitHub
+- Go over notes for Sarah’s transcriptomics project again and see where I can do some stuff here and there to get ready
+
+
+Master’s Publication
+Next week’s goals:
+	- Double check lines and traits for each line (in an excel spreadsheet Ben gave me)
+	- Set up task array and rerun code with double checked data
+	- Meet with Ben on Tuesday
+
+
+Extracurriculars (<font color="red">during work hours</font>, <font color="blue">outside work hours</font>): <font color="red">Coffee with former regent </font>(Tuesday 2hr), <font color="blue">Alumni Society Meeting</font> (Tuesday 2.5 hr) <font color="red">Dept coffee </font> (Wednesday, 1hr), <font color="blue">Intramural Softball </font>(Wednesday, 2hr), <font color="red">gradSERU data meeting </font> (Thursday or Friday, 2hr)
+
+Thanks!
+Erin
+</pre>
+
+## May 21-25
+<pre>
+Hi Cory,
+
+Here is my update for the week.
+
+SDS/BSR Project
+Last week’s goals:
+- Work with stressed plant tissue
+	- <s>Look into k-means clustering more This is getting difficult.</s> <b> I still have to figure out how many channels to ask for after Sydney scores the first round. </b>
+	- <s>Look into more ways to identify plant pixels with MATLAB. Want to try more segmentation methods that implement more machine learning.</s> <b> There are some really useful videos, but I need to think about how much time I can take from the undergrads.</b>
+- <s>Meet with Grace to look over plans for planting fields and next growth chamber experiment</s> <b> Talked with her. Bennet, an undergrad, has taken over and I am working with him on this now. The dates are in the calendar.</b>
+- Get the BSR growth chamber end-of-season measurements <b>Need to bug Grace/Bennet for these</b>
+- Work with undergrads
+	- Sydney
+		- Talk more about plant pixel segmentation 
+		- Introduce her to the Apogee system <b>Didn’t get a chance to do this but we talked about planting and scanning schedules a little bit.</b>
+	- Evan
+		- Help him when needed 
+	- Khoa
+		- Check in about field cart images <b>Wasn’t around </b>
+
+Next week’s goals:
+
+- Field
+	- Work with stressed plant tissue
+		- Decide whether k-means clustering is worth it
+		- Look to see if I can have Sydney help me with training a machine learning model for identifying plants
+	- Stake and plant Rosemount field
+	- Inoculate the BSR growth chamber round 2
+
+
+BRAG Project
+This week’s goals:
+- <s>Follow up with Fernanda and get copy of poster to put in shared drive archive</s> <b> Put it on shared drive.</b>
+
+
+PhD Progress Overall
+Last week’s goals:
+- <s>Have committee meeting</s> <b> I think it went well</b>
+- <s>Meet with Lynne to make sure all my credits are in order (need to apply transfer credits from UNL)</s> <b> I had a meeting with her and we submitted everything I needed to submit for transfers. Also submitted my GPAS.</b>
+- <s>Talk with Cory about Spring 2019 classes</s> <b> Signed up for Melania’s class in the fall and will finish up thesis credits in spring </b>
+
+Next week’s goals:
+- Get committee submitted, if not, figure out why my GPAS hasn’t been approved.
+- Start meeting with Ben so I can get my Masters’ thesis published
+- Think about other projects I can get involved with (Sarah’s transcriptomics, etc.)
+
+
+Extracurriculars (<font color="red">during work hours</font>, <font color="blue">outside work hours</font>): <font color="red">COGS Executive Committee Meeting</font> (Wednesday afternoon, 2 hr), <font color="red">Dept coffee </font>(Wednesday, 1hr)
+
+Thanks!
+Erin
+</pre>
+
+Committee meeting notes from Cory
+![](/Volumes/hirsch_lab/grad_student_progress/erin/committee_meetings/1_courses_prelim_schedule/hirsch_kurle_springer/20180522_120137.jpg)
+
+## May 11-18
+<pre>
+Hi Cory,
+
+I was pretty happy with the research work I was able to do this week.
+
+SDS/BSR Project
+Last week’s goals:
+- Keep working with stressed plant tissue
+	- <s>Look into k-means clustering more</s> <b>Sydney is still working on her scoring protocol</b>
+	- <s>New goal: Look into more ways to identify plant pixels with MATLAB</s> <b>There are some really good apps</b>
+- Look at using mats
+	- <s>Took a scan with mat material to see how it segments</s> <b>It is really shiny, so it can be hard to segment large portions but it’s easy to eliminate the blue</b>
+	- <s>Washing the mats</s> <b>They held up really well to just washing with soap and water and can definitely be re-used.</b>
+- <s>Growth chamber take down</s>  
+- Work with Undergrads
+	- Sydney
+		- <s>Take down growth chamber</s> <b>She helped a lot and also helped Grace and the other undergrads with the pathology stuff</b>
+	- Evan
+		- Help him when needed <b>Wasn’t around much this week</b>
+	- Khoa
+		- Check in about field cart images <b>Wasn’t around this week</b>
+
+Next week’s goals:
+- Work with stressed plant tissue
+	- Look into k-means clustering more
+	- Look into more ways to identify plant pixels with MATLAB. Want to try more segmentation methods that implement more machine learning.
+- Meet with Grace to look over plans for planting fields and next growth chamber experiment
+- Get the BSR growth chamber end-of-season measurements
+- Work with undergrads
+	- Sydney
+		- Talk more about plant pixel segmentation
+		- Introduce her to the Apogee system
+	- Evan
+		- Help him when needed 
+	- Khoa
+		- Check in about field cart images
+
+
+BRAG Project
+This week’s goals:
+- <s>Fernanda contacted me asking for poster images and captions</s> <b>Gave her some example ones. She seemed ok with it.</b>
+
+Next week’s goals:
+- Follow up with Fernanda and get copy of poster to put in shared drive archive
+
+
+PhD Progress Overall
+Last week’s goals:
+- <s>Email out thesis proposal to committee and remind them of meeting next week and that seminar is cancelled</s>
+- <s>Get paperwork in order for theses proposal meeting (Curriculum and other things to sign)</s>
+- <s>Put together a short <20 min presentation about project</s> <b>Done and gave it to Kevin Smith today</b>
+- <s>New Goal: Meet with Kevin Smith and talk about my progress</S>
+
+Next week’s goals:
+- Have committee meeting
+- Meet with Lynne to make sure all my credits are in order (need to apply transfer credits from UNL)
+- Talk with Cory about Spring 2019 classes
+
+
+
+Extracurriculars (<font color="red">during work hours</font>, <font color="blue">outside work hours</font>): <font color="red">CFANS Graduate Student Board budget meetings</font> (TBA, 2 hr), <font color="red">Dept coffee</font> (Wednesday, 1hr)
+
+Thanks!
+Erin
+</pre>
+
+## April 30- May 4
+<pre>
+Hi Cory,
+
+It was the week of seminars and presentations, and I didn’t get anything done the first half of the week. I was able to get pretty focussed in the latter half of the week, though.	
+
+SDS/BSR Project
+Last week’s goals:
+- Keep working with stressed plant tissue
+	- Create files that contain the different channels of the k-means results (SDS round 1 only) and have Sydney manually pick out channels for each image. <b>The code works for this, but MSI is having license issues (too many people trying to use it at once). I'm going to start running these things overnight or on weekends</b>.
+	- <s>See if I can shorten the queue time MSI for Matlab</s> <b>Cory helped. Have to reduce the amount of memory requested.</b>
+- Work with Undergrads
+	- Sydney:
+		- <s>Help her with computer stuff. She struggles with computer literacy, so I kind of backed off on getting her to do things like back scans up. We have been working on practicing the things I have already taught her, so I think I can add one new task every two/three weeks or so.</s> <b>Worked on this a little bit. Talked about scans and </b>
+		- <s>Meet with Cory to talk about the scoring methods</s> <b>Cory suggested some qualitative notes</b>
+	- Khoa: <s>Keep in touch about the cart images.</s> <b>He seems to be doing ok</b>
+	- Evan: <s>Help him out with stuff when he needs it.</s> <b>Helped him with figuring out how to loop through all raw files in a directory</b>
+- <s>Make sure all backups are up-to date</s> <b>Had to delete some of my stuff off the hyperspec computer. Made sure Tier 2 was up to date.</b>
+
+Next week’s goals:
+- Keep working with stressed plant tissue
+	- Create files that contain the different channels of the k-means results (SDS round 1 only) and have Sydney manually pick out channels for each image.
+	- Check in with Grace about ordering seed
+- Work with Undergrads
+	- Sydney:
+		- Train her more on the hyperspec (taking dark and white references). I’m going to print out the how-to guide and tape it to the hyperspec monitor table in the lab.
+		- Have her score round 1 of kmeans = 5 channel images
+	- Khoa: Keep in touch about the cart images. 
+	- Evan: Help him out with stuff when he needs it.
+
+PhD Progress Overall
+Last week’s goals:
+- Make changes to thesis proposal draft <b>Working on this now. Mendeley is giving me some trouble on my computer.</b>
+- <s>Do more safety trainings,</s> try to get them all done to reach maximum safety level 
+- <s>Re-evaluate how much time I am setting aside for reading/writing</s> <b>Thought a lot about "protecting my time.” I’ve started to tell people “no” to a lot of optional things.</b>
+- <s>Check the office for stuff that might need to go into the inventory</s> <b>Had Sydney work on this.</b>
+- <s>Meet with Peter to go over the grade book</s> <b>This went about as well as expected</b>
+- Added goal: <s>Ask Grace about next growth chamber round</s> <b>She hasn’t really thought about it. I need to bug her more.</b>
+- Added goal: <s>Ask Grace about ordering seed for field plots</s> <b>Almost all of it has been collected. We still need seed from 3 or 4 varieties, she said.</b>
+
+Next week’s goals:
+- Go to Peter’s final and make sure all grades are in
+- Do more safety trainings, try to get them all done to reach maximum safety level 
+- Try to finish up thesis proposal to send out the following week
+- Go to UMCAP interviews and review candidates
+
+
+Extracurriculars (<font color="red">during work hours</font>, <font color="blue">outside work hours</font>): <font color="red">UMCAP interview talks and meetings </font>( Tuesday & Thursday, 4 hrs), <font color="red">Board of regents meeting, probably will not have to go to this but just in case </font>(Thursday, 3 hrs), <font color="red">Psych appt </font>(Thursday, 1hr), <font color="blue">Senate campaign fundraiser </font>(Thursday, 2 hrs), <font color="red">Plant Science Symposium meeting, may not happen but just in case </font>(TBA, 30 min)
+
+Thanks!
+Erin
+<img src="http://ministryfeeds.com/wp-content/uploads/2014/04/may_4th_teaser.png">
+</pre>
+
+## April 23-27
+<pre>
+Hi Cory,
+
+I felt really productive in the lab this week, but didn’t get as much writing done as I wanted. I need to start setting aside more time for reading/writing.
+
+SDS/BSR Project
+Last week’s goals:
+- Keep working with stressed plant tissue
+	- Create files that contain the different channels of the k-means results and have Sydney manually pick out channels for each image. 
+	- Added goal: <s>Get MSI working with Matlab.</s> <b>I got the code to run on MSI without it being shut down. Ended up being a memory allocation issue. They are spending a long time in the queue though.</b>
+- Work with Undergrads
+	- Sydney: 
+		- <s>Will probably have to re-arrange how we do scans because the plants are getting bigger and Grace plans to stake them.</s> <b>We had to do this as well as move the camera up</b>
+		-Added goal: <s>Talk to her about taking notes.</s> <b>I showed her how I keep track of things during the week and she came up with her own system that I think works for her.</b>
+		- Added goal: <s>Get started on scoring some of the R and older Matlab extractions.</s> <b>We talked about what measurements would be useful to record and how we can record them to make useful plots later.</b>
+	- Khoa: <s>Keep in touch about the cart images.</s>  <b>For some reason, my bash script doesn’t work on his computer, so he is going to write some python code to run the Matlab.</b>
+	- Evan: <s>Help him out with stuff when he needs it.</s> <b>We talked about which data structures he should export from Matlab for his barley project.</b>
+- Lab inventory
+	- <s>I have created a lab inventory so we can keep track of things. I am using it to sort stuff into drawers/cabinets and then I will have Sydney help me label them.</s> <b>Done. I should check on the office desks/cabinets, though.</b>
+
+Next week’s goals:
+- Keep working with stressed plant tissue
+	- Create files that contain the different channels of the k-means results (SDS round 1 only) and have Sydney manually pick out channels for each image. 
+	- See if I can shorten the queue time MSI for Matlab
+- Work with Undergrads
+	- Sydney:
+		- Help her with computer stuff. She struggles with computer literacy, so I kind of backed off on getting her to do things like back scans up. We have been working on practicing the things I have already taught her, so I think I can add one new task every two/three weeks or so.
+		- Meet with Cory to talk about the scoring methods
+	- Khoa: Keep in touch about the cart images.
+	- Evan: Help him out with stuff when he needs it.
+- Make sure all backups are up-to date
+
+PhD Progress Overall
+Last week’s goals:
+- <s>Finalize seminar outline with Cory</s> <b>Seminar got moved to September, so will have to move this to later</b>
+- Make changes to thesis proposal draft <b>Working on it, should be done over the weekend</b>
+- Do more safety trainings, try to get them all done to reach maximum safety level <b>Working through these</b>
+- <s>Grade a whole bunch of crap for Peter’s lab (he’ll probably give me more to grade)</s> <b>I can’t wait for the semester to be over</b>
+- Added goal: <s>Get notes up to date.</s> <b>I think they’re pretty up to date now.</b>
+
+Next week’s goals:
+- Make changes to thesis proposal draft 
+- Do more safety trainings, try to get them all done to reach maximum safety level 
+- Re-evaluate how much time I am setting aside for reading/writing
+- Check the office for stuff that might need to go into the inventory
+- Meet with Peter to go over the grade book
+
+Extracurriculars (<font color="red">during work hours</font>, <font color="blue">outside work hours</font>): <font color="red">Department Awards Day</font> (Monday, 3 hours), <font color="blue">COGS GA </font>(Monday, 2hr), <font color="blue">Coffee with Regent Campaign People </font>(Tuesday, 1hr), <font color="red">Department Coffee</font> ( Wednesday, 1hr) <font color="red">Artemisia Circle </font>(Wednesday, 2 hrs), <font color="red">CFANS Graduate Student Board </font>(Friday, 3 hrs)
+
+Thanks!
+Erin
+</pre>
+
+## April 16-20
+<pre>
+Hi Cory,
+
+I had a great time this week working with the undergrads.
+
+SDS/BSR Project
+
+Last week’s goals:
+- Keep working with stressed plant tissue
+	- <s>Run more images with the k means clustering</s> <b>We talked about this on Friday. See next week’s goals</b>
+- Work with undergrads
+  - Sydney: Now that she has access to the shared drive, I would like to get her working on a standardized feedback system for our qc images. I will also introduce her to the field cart data and how it differs from the indoor. <b>We didn’t get to do this but we talked more about how we want to do scans. The BSR plants are getting big so we strategized how we will image them as they grow.</b>
+  - Evan: <s>Help him out if he has questions about MatLab. As an aside, his computer runs MatLab incredibly slow.</s> <b>We worked together to identify seeds in one of his barley images. We talked about RGB and greyscale images and I showed him how to QC his stuff. We also talked about taking notes.</b>
+  - Khoa: <s>Start meetings with Khoa to talk about field images.</s> Maybe pull in Sydney for QC after extraction finalized?
+- Order seed if/when Grace chooses the lines <b>She never mentioned it</b>
+-Work more with the blue mats to answer the following requests from Cory: 
+  1. do they help data extraction
+  2. if they can be cleaned and reused (that would be great) 
+	3. if/when we need to get more
+<b>This will probably have to wait until the next round of seedlings to fully test the mats.</b>
+
+Next week’s goals:
+- Keep working with stressed plant tissue
+	  - Create files that contain the different channels of the k-means results and have Sydney manually pick out channels for each image. 
+- Work with Undergrads
+	  - Sydney: Will probably have to re-arrange how we do scans because the plants are getting bigger and Grace plans to stake them.
+	  - Khoa: Keep in touch about the cart images.
+	  - Evan: Help him out with stuff when he needs it.
+- Lab inventory
+	  - I have created a lab inventory so we can keep track of things. I am using it to sort stuff into drawers/cabinets and then I will have Sydney help me label them.
+
+
+PhD Progress Overall
+Last week’s goals:
+- <s>Discuss thesis proposal first draft impressions with Cory. Doesn’t have to be on Monday morning. Just whenever you get around to skimming it.</s> <b>Did that a little. Waiting on full remarks.</b>
+- Set outline for my thesis proposal seminar <b>Almost done. Will send slides w/ titles on Monday.</b>
+- <s>Figure out what other training I have to do Cory sent a list</s>
+    - <s>Do more safety training so I can be even more safe I have gotten through some of them.</s>
+- Grade a whole bunch of crap for Peter’s lab <b>Will try to do this weekend</b>
+
+Next week’s goals:
+- Finalize seminar outline with Cory
+- Make changes to thesis proposal draft
+- Do more safety trainings, try to get them all done to reach maximum safety level
+- Grade a whole bunch of crap for Peter’s lab (he’ll probably give me more to grade)
+
+Extracurriculars (so we can keep track of what's going on in off-work hours): COGS exec meeting (Monday, 2 hrs), Coffee w/ Regent Omari (Thursday, 2hrs), CFANS graduate commencement (Friday, 2 hours, will probably go out to dinner after w/ Nick’s family)
+
+Thanks!
+Erin
+</pre>
+
+## April 9-13
+<pre>
+Additionally, under next week’s goals:
+
+-Work more with the blue mats to answer the following requests from Cory:
+	1. do they help data extraction
+	2. if they can be cleaned and reused (that would be great) 
+	3. if/when we need to get more
+
+Also, meant to say that we can get ~13 soil covers for 6 inch pots out of each roll of blue mat. 
+
+On Apr 14, 2018, at 7:11 AM, Erin Gilbert <gilbe952@umn.edu> wrote:
+
+Hi Cory,
+
+I forgot to hit send on this email last night :/ Sorry this is late. Totally my bad. Lots of writing this week. Still a little more to do. I will send you what I have at around 7pm if that’s ok.
+
+SDS/BSR Project
+
+Last week’s goals:
+- Work with the undergrads
+	- Sydney: Now that she has access to the shared drive, I would like to get her working on a standardized feedback system for our qc images. I also want to train her on putting scans on the server and also backing up everything on an external hard drive. I will also introduce her to the field cart data.
+	- Khoa: We looked at one example image from last year’s cart data. He is going to look at more on Tuesday and we will go over them together. Like mentioned above, I want to get him and Sydney working together on trouble shooting issues that come up on the qc images for the field.
+- <s>Try out the blue mats to cover the soil</s>
+	- <s>Come up with how to put them over plants</s> <b>We found the best way is to tract the top of the pot, cut a long slit down the middle of it and wrap the plat.</b>
+	- determine how much mat we will probably use per pot type per experiment <b>We got 25 soil covers for each</b>
+- Order seed if/when Grace chooses the lines <b>waiting on her</b>
+- Keep working on identifying the stressed tissue
+	- <s>Work with RGB to try to pull out yellow/brown leaves</s>   <b>K-means clustering runs as of 2 hours ago! We should talk about it Monday morning.</b>
+	- Talk with Nathan Miller about object identification algorithms <b>Didn’t happen but that’s ok</b>
+
+Next week’s goals:
+- Keep working with stressed plant tissue
+	- Run more images with the k means clustering
+- Work with undergrads
+	- Sydney: Now that she has access to the shared drive, I would like to get her working on a standardized feedback system for our qc images. I will also introduce her to the field cart data and how it differs from the indoor.
+	- Evan: Help him out if he has questions about MatLab. As an aside, his computer runs MatLab incredibly slow.
+	- Khoa: Start meetings with Khoa to talk about field images. Maybe pull in Sydney for QC after extraction finalized?
+- Order seed if/when Grace chooses the lines
+
+
+PhD Progress Overall
+Last week’s goals:
+- <s>Safety training!</s><b> I am now incredibly safe</b>
+- <s>Finish first draft of thesis proposal (writing will probably take up a ton of my time this week)</s><b> I just have one more section of the lit review.</b>
+
+Next week’s goals:
+- Discuss thesis proposal first draft impressions with Cory. Doesn’t have to be on Monday morning. Just whenever you get around to skimming it.
+- Set outline for my thesis proposal seminar
+- Figure out what other training I have to do
+- Grade a whole bunch of crap for Peter’s lab
+ Do more safety training so I can be even more safe
+ 
+Extracurriculars (so we can keep track of what's going on in off-work hours): GSB (1 hrs), Soup Lunch (2hrs), Artemesia circle (2 hours)
+
+Thanks!
+Erin
+</pre>
+
+
+## April 2-6
+<pre>
+Hi Cory,
+
+This week I felt like I didn’t get as much done as I wanted with writing. Next week is going to be tons of writing to get you my first draft of my thesis proposal.
+
+
+SDS/BSR Project
+Last week’s goals:
+- <s>Set goals for planting (this should be worked out in the meeting with Grace and Jim)</s> <br>We had a pretty productive meeting.</s>
+- <s>Get Sydney more familiar with scans</s> <b>She did a great job this week!</b> 
+	- <s>This week I supervised her heavily in the scan but next week I want to try to get her to be more independent with it</s>
+- Address problems with soybean plant identification
+	- <s>Identifying whole plants: Work with Tara’s code more to see how I can get larger plants to show up in the final object identification</s> <b>Didn’t work.</b>
+	- <s>Identifying dead tissue: I found a large list of indices to try. I think some of the specified “yellow" indices should be able to pick up dead tissue and stems.</s> <b>The list ended up being a dead end. I learned about a ton of indices though. Iw ant to work more with the RGB and Nathan Miller.</b>
+
+Next week’s goals:
+- Work with the undergrads
+	- Sydney: Now that she has access to the shared drive, I would like to get her working on a standardized feedback system for our qc images. I also want to train her on putting scans on the server and also backing up everything on an external hard drive. I will also introduce her to the field cart data.
+	- Khoa: We looked at one example image from last year’s cart data. He is going to look at more on Tuesday and we will go over them together. Like mentioned above, I want to get him and Sydney working together on trouble shooting issues that come up on the qc images for the field.
+- Try out the blue mats to cover the soil
+	- Come up with how to put them over plants
+	- determine how much mat we will probably use per pot type per experiment
+- Order seed if/when Grace chooses the lines
+- Keep working on identifying the stressed tissue
+	- Work with RGB to try to pull out yellow/brown leaves
+	- Talk with Nathan Miller about object identification algorithms
+
+PhD Progress Overall
+Last week’s goals:
+- Fill in outline for thesis proposal 
+	- <s>Gather all sources I think I have everything I need.</s> <b>I have ~25 papers</b>
+	- Write out all basic paragraphs
+	- <s>Identify some backup objectives in case one of the three I chose aren’t sufficient</s> <b>We had a great talk on Monday about my 1st objective. I am hoping to flesh it out more next week when I talk with Nathan Miller.</b>
+
+Next week’s goals:
+- Safety training!
+- Finish first draft of thesis proposal (writing will probably take up a ton of my time this week)
+ 
+Extracurriculars (so we can keep track of what's going on in off-work hours): GSB (2.5 hrs), GRPRC meeting (2hrs)
+
+Thanks!
+Erin
+</pre>
+
+## March 26-30
+<pre>
+Hi Erin,
+I’m glad to hear you making and are continuing to make more progress on your research. A couple of things. I think Sydney is very capable, but remember it is your responsibility to make sure your data is being collected and collected properly. Keep in mind that she is still fresh in doing this and will need to be eased into it, letting her take more responsibility is great, but you have to make sure she is doing it well. Also, make sure that a goal for early next week is to take a look at the hand held field data as we talked about last week. I didn’t see that as one of your goals so please don’t forget to prioritize that. Thanks.
+
+Cory
+
+On Mar 30, 2018, at 10:18 PM, Erin Gilbert <gilbe952@umn.edu> wrote:
+
+Hi Cory,
+
+This week I felt like I could start to do a little more work than I have the past few weeks. I have focused a lot on trying to see the big picture of my project. Next week is also pretty clear, so I am hoping to continue picking up the pace on my work.
+
+
+SDS/BSR Project
+Last week's goals:
+- Get basic Matlab QC code working <b>We determined that it is a problem with submitting it to Mesabi. The MSI Matlab guy and I are running tests to figure out what exactly is wrong because this could affect other projects.</b>
+              - <s>Run first round scans with this</s>   <b>Was able to run these on command line and we identified problems that we should address (highlighted in next week’s goals).</b>
+- <s>Start working with Sydney</s> <b>This went really well. Sydney and I went over scanning protocol on Monday and then on Thursday we were able to get scans done really fast. I also talked to her about what I want for QC and talked more about the SDS project.</b>
+              - <s>Train her on hyperspec</s>
+              - Have her look at some QC pictures
+- Start doing statistical analyses on Matlab extractions <b>This will need more work next week</b>
+              - Figure out which data we want  <b>Looked a little bit at this, but we are still working on the object identification</b>
+- <s>Figure out how to automatically label and output desired data in Matlab</s> <b>We talked about this last Monday. The objects are identified by center of mass and we should be able to label accordingly in the output files.</b>
+              - <s>Look Closer at PCs and what we can learn from them (I have already started to read up on them more)</s>
+- <s>try to talk to Jim about field planting</s> <b>Meeting is set up for next Wednesday.</b>
+
+Next week’s goals:
+- Set goals for planting (this should be worked out in the meeting with Grace and Jim)
+- Get Sydney more familiar with scans
+	- This week I supervised her heavily in the scan but next week I want to try to get her to be more independent with it
+- Address problems with soybean plant identification
+	- Identifying whole plants: Work with Tara’s code more to see how I can get larger plants to show up in the final object identification
+	- Identifying dead tissue: I found a large list of indices to try. I think some of the specified “yellow" indices should be able to pick up dead tissue and stems
+
+
+PhD Progress Overall
+Last week's goals: 
+- <s>Finish outline for thesis proposal</s>  <b>I enjoyed our talk on Monday about identifying my three objectives based on the papers I would like to publish as a PhD student. I gave a lot of thought to it and identified three subjects I would like to cover.</b>
+
+Next week’s goals:
+- Fill in outline for thesis proposal 
+	- Gather all sources
+	- Write out all basic paragraphs
+	- Identify some backup objectives in case one of the three I chose aren’t sufficient
+ 
+Extracurriculars (so we can keep track of what's going on in off-work hours): Plant Sciences Symposium wrap-up meeting (1 hr), GSB initiative (1hr)
+ 
+ 
+Thanks,
+
+Erin
+<pre>
+
+## March 19-23
+<pre>
+Hi Erin,
+Seems like all your weeks are crazy weeks. I think you are seeing that you need to be able to use all your time appropriately when you have these weeks. You will have to be able to jump in and out of things without requiring hours of time chunks to get into things. Have to have a plan ahead of time. Also, start trying to frame some bigger picture headers like we talked about before to keep things in context for yourself. Since we probably don’t have much research wise to talk about Monday I can look through your outline of your proposal. Have a good rest of the weekend. Thanks. 
+
+Cory
+
+On Mar 24, 2018, at 10:35 AM, Erin Gilbert <gilbe952@umn.edu> wrote:
+
+Hi Cory,
+ 
+Last week was a bit of a mess because of the Plant Sciences Symposium. I'm really glad it's out of the way. I've been trying to practice getting in half an hour of work here or there so I can still make progress during busy weeks.
+ 
+I'm going to start categorizing my goals.
+ 
+SDS/BSR Project
+Last week's goals:
+- <s>Plant BSR GC</s>
+Next week’s goals:
+- Get basic Matlab QC code working
+              - Run first round scans with this
+- Start working with Sydney
+              - Train her on hyperspec
+              - Have her look at some QC pictures
+- Start doing statistical analyses on Matlab extractions
+              - Figure out which data we want
+- Figure out how to automatically label and output desired data in Matlab
+              - Look Closer at PCs and what we can learn from them (I have already started to read up on them more)
+- try to talk to Jim about field planting
+ 
+PhD Progress Overall
+Next week's goals: 
+- Finish outline for thesis proposal
+ 
+Extracurriculars (so we can keep track of what's going on in off-work hours): Soup Lunch setup (~1.5 hrs), Artemesia Circle (2 hrs), Rep to Regents meeting (2 hrs), GSB initiative (1hr)
+ 
+ 
+
+Thanks,
+
+Erin
+</pre>
+
+##March 12-16
+<pre>
+I thought this week went pretty well. It was nice to not have classes. I am feeling really worn down, though, so I took a half day off today.
+
+LAST WEEK’S GOALS:
+- <s>Get Matlab code up and running and do comparison between that and the R code I really like Matlab.</s> <b>It is much faster. I think we should move forward with Matlab for extractions and R for analysis. We can talk more in person if you want. </b>
+- <s>Turn in MnDRIVE</s>
+- <s>Finish grading for Peter’s lab</s>
+- Rerun extractions for all 3 growth chamber rounds with the soil masking protocol and generate qc pngs with rgb added. <b>I will be working on this over the weekend. I almost have the code ready to go as of 10pm Friday.*</b>
+
+Not going to lie. Next week is going to be a nightmare. The Plant Sciences Symposium is going on Thursday and Friday and I am on the committee for that. I will be unreachable all Thursday afternoon and all of Friday. I will try to get as much done as possible over this weekend. But between that, TAing Peter’s lab, and Monday meetings, I really don’t have as much research time as I would like.
+
+NEXT WEEK’S GOALS:
+- Plant BSR GC
+- Start doing statistical analyses on Matlab extractions
+- Extracurricular tasks (so we can keep track of what's going on in off-work hours): IT for Plant Science Symposium (~15 hrs, including outside of work hours), Meet with Hennepin County to discuss Hennepin/CFANS collaboration(1hr), Orthodontist (1hr)
+
+*I have already figured out passing the arguments to the code so I can integrate it with the job task array I have on MSI. I think my immediate challenge is to get the Matlab code to identify and extract individual objects. I know Tara did it with PCs, but I need to look over her code again. Maybe it can be something we talk about on Monday in our methods meeting.
+
+Thanks,
+</pre>
+
+## March 5-9
+<pre>
+Hi Cory,
+
+I must have forgotten to mention that in my "other" hour estimations I try to include the prep/travel time. For instance, the root canal crown will only take ~30 minutes in the dental chair, but I factor in time on the connector to make it 1.5 hours.
+
+My research to-do list is short because I've noticed the last few weeks that I keep moving major stuff from the "LAST WEEK" bin to the "NEXT WEEK" bin with little progress for each. It's very frustrating for me to notice myself fall into that pattern. My attempt to stop it is to try to focus really hard on the next few steps for 1 or 2 days to try to build momentum. If I keep adding small things to my checklist I'll focus on those and pat myself on the back at the end of the week when really I should be focusing on my thesis research. I do want to achieve more next week, but I want to make sure to prioritize those two goals on Mon/Tue.
+
+Maybe I should create categories for major and minor goals for each week.
+
+I do agree I am slow on my research progress and I want to pick up speed. I've been working on making sure I get in earlier and leave work later as well. Now I need to make sure to maximize my productivity in those hours. I'm looking forward to not having class next week. But yes, I do feel like my focus has been waning. I'll make sure to get back on top of things.
+
+Thanks again,
+Erin
+
+
+On Mar 10, 2018 3:56 PM, "Cory Hirsch" <cdhirsch@umn.edu> wrote:
+Hi Erin,
+Thank you for the weekly update. It seems you made some progress on things this past week and things are moving in the right direction. Thank you for keeping me up-to-date with the ‘others’ in your schedule, it seems like every week you have ~8hrs, outside of TAing, of extra things, which seems to be just meeting times, not including any travel or prep for them. How are you feeling about that extra workload? As next week is spring break you really need to make more progress on your research tasks this week. I’m hoping you can accomplish a bit more than what you have outlined for next week. This current project funding ends at the end of April and you need to make more progress to accomplish a bit more of our deliverables to the growers so we can have a more robust end of project report. Hope you are having a good weekend, thanks.
+
+Cory
+
+On Mar 9, 2018, at 7:49 PM, Erin Gilbert <gilbe952@umn.edu> wrote:
+
+This week was pretty good. I tried focusing on improving my writing skills and thinking about academic writing. Just been something that’s on my mind. I made the goal to try to do some kind of writing for at least an hour 5-6 days out of the week and I also signed up for an APS writing group that meets twice per week.
+
+
+LAST WEEK’S GOALS:
+- Get MnDrive application done so all I have to the week after is combine it with the recommendations. <b>We’re on version 2 and I am really liking how it is shaping up. </b>
+- <s>Talk to Jim about recommendation</s> <b>Done. He will send it to Lynne.</b>
+- <s>Start thinking about setting up the field trials and talk to Jim Kurle about it again.</s> <b>I have been thinking about this a lot. There is an R package that I got introduced to at the Phenome 2018 workshop that generates experimental designs with enough power to get proper statistics out of them. I would really like to use this to set up our fields. I do need to ask what Jim has in mind for the number of varieties, though.</b>
+- Rerun extractions for all 3 growth chamber rounds with the soil masking protocol and generate qc pngs with rgb added. <b>Didn’t get to this but got some Matlab code that I am messing with to try to run our images through</b>
+- Plant BSR growth chamber experiment with Grace <b>This was kind of a disaster, admittedly. I’ll be sure to be a lot more intent on detail checking when we replant after spring break.</b>
+- <s>Help Vahid with his plot for the manuscript Helped him with this.</s> <b>I felt good about my contributions to the MPGI update meeting. Vahid also said he will ask to meet with me so I can help a little bit with figures.</b>
+- Get insane amount of grading for Peter’s class done It’s not actually that much grading. <b>Most of it is done and I will finish it up next week when I don’t have to TA lab.</b>
+
+
+NEXT WEEK’S GOALS:
+- Get Matlab code up and running and do comparison between that and the R code
+- Turn in MnDRIVE
+- Finish grading for Peter’s lab
+- Rerun extractions for all 3 growth chamber rounds with the soil masking protocol and generate qc pngs with rgb added.
+- Extracurricular tasks (so we can keep track of what's going on in off-work hours): Meet with Regent Omari, IT for Plant Science Symposium (3 hrs), Meet with Hennepin County to discuss Hennepin/CFANS collaboration(1hr), root canal crown (1.5 hr), APS Soup Lunch (2 hr)
+
+Thanks,
+Erin
+
+</pre>
+
+## February 19-23
+<pre>
+Hi Erin,
+I would like to keep our biweekly meetings as a more high level meeting big picture or papers or things discussion. I want this other meeting at 9am for me to look through what you are working on, ask questions, provide more focused feedback and things like that. I hope that makes sense. For these meetings at 9am be ready to show notes of how you are doing things and things for me to look at that you are making progress on. I will leave the format this is in up to you and I’ll suggest alternatives if I think it would make for more meaningful discussions. Thanks.
+
+Cory
+
+On Mar 3, 2018, at 3:57 PM, Erin Gilbert <gilbe952@umn.edu> wrote:
+
+Sorry, forgot to ask. Do you want to keep our biweekly “small group” meetings? We can just meet at 11:30am on those Mondays.
+
+Thanks.
+Erin
+
+On Mar 3, 2018, at 3:51 PM, Cory Hirsch <cdhirsch@umn.edu> wrote:
+
+Hi Erin,
+Sure, lets plan on Monday mornings at 9am. I’ll come up to the lab for this meeting. Thanks.
+
+Cory
+
+On Mar 3, 2018, at 3:48 PM, Erin Gilbert <gilbe952@umn.edu> wrote:
+
+Hi Cory,
+
+It looks like we are both free on Monday mornings until April 30th. Do you want to try having our 1on1s first thing on Monday morning? It might help set goals for the week.
+
+Thanks!
+Erin
+
+On Mar 3, 2018, at 3:10 PM, Cory Hirsch <cdhirsch@umn.edu> wrote:
+
+Hi Erin,
+Thank you for the update. I hope you had a rewarding time at ISU to end the week. It seems like you are making progress on things. I want to start helping move things along for us and help to set priorities and goals for you. I also need to keep up with what you are doing in terms of research, not just the big picture you are working on, but I need to stay more up to date with how things are being done, how things are coded, how can I help and add. This will help us stay on track and will hopefully lessen the surprises down the road. I would like us to find a time that both of us can meet every week, a recurring 1-1.5hr meeting. Offer some times and we will get something on the calendar. I would like us to start this next week. Thats all I have for now, have a good rest of the weekend.
+
+Cory
+
+On Mar 2, 2018, at 3:24 PM, Erin Gilbert <gilbe952@umn.edu> wrote:
+
+This week was much better than last week in terms of productivity. I am finding that TAing is starting to take up more and more time. Losing one day of the week really sucks. Next week I am going to try to sneak out during the early lab.
+
+
+THIS WEEK’S GOALS:
+- <s>Get RGB images generated and test using them to mask soil.</s>
+	<b>Came up with a good ratio for generating RGB from a test image. Need to test it with a larger test set, then figure out how to mask out the soil from this. I will work on it Sat/Sun.</b>
+- Rerun extractions for all 3 growth chamber rounds with the soil masking protocol and generate qc pngs with rgb added. 
+	<b>Need to get the rgb this finalized. I have attached my best picture from the sample scan so far.</b>
+- Finish backing up data from all projects 
+	<b>Want to do a third backup on the GLOBUS thing that Tom showed in lab meeting a couple of weeks ago.</b>
+- <s>BSR trial will be planted March 5th. So we should get together and talk about scanning schedule.</s> 
+	<b>We talked about the scanning schedule and schedules for MnDrive and thesis proposal/committee meeting. Grace had to move the planting to Wednesday (March 7). Already made the change on the calendar.</b>
+- <s>Presenting poster at ISU Plant Breeding Symposium on Friday.</s>
+	<b>There now. Did some good networking with other grad students. Poster session went well.</b>
+- <s>Start thinking about setting up the field trials and talk to Jim Kurle about it again.</s>
+	<b>Meeting with him next week to talk about MnDrive and will ask him about this</b>
+
+NEXT WEEK’S GOALS:
+- Get MnDrive application done so all I have to the week after is combine it with the recommendations.
+- Talk to Jim about recommendation
+- Start thinking about setting up the field trials and talk to Jim Kurle about it again
+- Rerun extractions for all 3 growth chamber rounds with the soil masking protocol and generate qc pngs with rgb added. 
+- Plant BSR growth chamber experiment with Grace
+- Help Vahid with his plot for the manuscript
+- Get insane amount of grading for Peter’s class done
+- Extracurricular tasks (so we can keep track of what's going on in off-work hours):  Last week of running COGS presidential elections (2 hrs/week), Graduate student board meeting Friday (4 hrs), APS Pancake breakfast (1 hr), Regent campaign manager meeting (1hr)
+
+Thanks,
+Erin
+
+
+<color_test2.png>
+</pre>
+
+
+## February 12-16
+
+<pre>
+Hi Cory,
+
+I will definitely prioritize the masking. I had a great time at Phenome and met a lot of people. Just a reminder, this week is when the Monsanto people are here to select the Monsanto fellowship winners. I can’t make it to the lunch because of TAing, and Don said last nights there were openings. I will be able to make it to the big session at 3:30.
+
+Thanks,
+Erin
+
+On Feb 19, 2018, at 9:32 PM, Cory Hirsch <cdhirsch@umn.edu> wrote:
+
+Hi Erin,
+Thank you for the update. Masking the plants is definitely a difficult task that is really important for us to find a good, robust method to use. It will take some playing around, but I think you have several options to start trying. Please prioritize this over anything else regarding this analysis (over pcas), because if we don’t have good starting data then the downstream analysis doesn’t really mean anything. Also, let me know if Vahid contacts you about anything so we can stay on top of that.
+
+I hope you had a good time at phenome and thought it was a good use of time for you. I like going to conferences as they give me new ideas for research and get me energized to get our current research out. I was happy to see you meeting and talking with people you didn’t know originally, hopefully that was fruitful for you as well. I can help you with your reimbursement later this week if you would like. Thanks.
+
+Cory
+
+On Feb 16, 2018, at 11:41 AM, Erin Gilbert <gilbe952@umn.edu> wrote:
+
+Hi Cory,
+
+Work this week was a little slow because of Phenome. Here is my update.
+
+THIS WEEK’S GOALS:
+- Get Perl Script to output what Vahid wants 
+	<b>Vahid confirmed he received the code. The shared folder with Vahid does not have any new files, so I am not sure he has run it yet.</b>
+- Think about ways to standardize colors for hyperspec-to-RGB image algorithm  
+	<b>There are two solutions. In the workshop at Phenome, I learned that my image is probably dark because I did not apply a gamma correction. I am going to try to implement that in to the R code. I also talked to the software guy from Middleton and he said he can write some Matlab code for me that would quickly produce a color image using two channels. Sara also told me she has some Matlab code for this.</b>
+- The QC images showed that a lot of soil is getting picked up with the smaller plants. I found an NDVI index which takes into account soil. I would like to run some test extractions to see if those profiles can be cleaned up. 
+	<b>The new index doesn’t work. I will have to think of other ways to mask out the soil. I think getting an RGB image and masking out the brown might be the easiest, though I foresee the white flecks in the soil to continue giving us problems.</b>
+- <s>Find a new place to backup scans. The hyperspec computer was full, so I had to delete some scans that were already backed up not he Hirsch_Lab_2 external hard drive. This means we now only have scans in 1 place where they are guaranteed to not be deleted anytime soon. Our original goal was 3 places.</s>  
+	<b>Everything we have taken so far is going to be pushed up to our home drive on MSI. Didn’t have time to move it all off of H_L_2 before I left for Phenome and I didn’t want to take the drive to AZ.</b>
+- Scan every day until Monday. Tuesday I have to fly to Phenome. 
+	<b>Didn’t get a scan on Tuesday, but this round is very different from the previous two anyways. Will have to start looking at the differences between rounds and think about how to compare data between them.</b>
+- <s>GO TO PHENOME. Learn at workshop, present poster, represent lab.</s> 
+	<b>At Phenome right now. Making a lot of friends, meeting up with past friends, and learning a lot.</b>
+
+
+NEXT WEEK’S GOALS:
+- Get RGB images generated. Would be a good addition to the QC images.
+- Continue trying to improve masking out soil.
+- Start pulling apart the PCA trait table data and categorize the wavelengths by effect on each day.
+- Peter is ramping up my tasks for TAing. I have more grading to do and I am now managing the lab quizzes on Canvas. We also talked about some students we are concerned about. I am learning a lot about how to deal with students as an instructor.
+- Extracurricular tasks (so we can keep track of what's going on in off-work hours): Artemisia seminar (1 hr), running COGS presidential elections (2 hrs/week), Plant Sciences Symposium IT phone call (30 min), UMN Legislative Kick Off Breakfast(1.5 hrs in early morning), I got nominated for the President's Student Leadership and Service Awards (PSLSA) so I have to fill out something for that (1.5 hrs).
+- Start thinking about setting up the field trials and talk to Jim Kurle about it again.
+
+
+Thanks,
+Erin
+</pre>
+
+## January 22-26
+
+<pre>
+Will do.
+
+On Jan 29, 2018, at 9:47 AM, Cory Hirsch <cdhirsch@umn.edu> wrote:
+
+Hi Erin,
+Hopefully you are in a pretty good place with your fellowship. Let me know today when I can look at it. I want to be able to make comments with enough time for you to make changes before the submission deadline.
+
+Cory
+
+On Jan 29, 2018, at 9:15 AM, Erin Gilbert <gilbe952@umn.edu> wrote:
+
+Hi Cory,
+
+Last week was a bit of a cluster. I realized TAing is going to take up pretty much all of Tuesdays, so that’s a bummer.  The main thing is, I have all members of my committee chosen and spoken to. We also got round 3 plants and in the chamber. I culled the seedlings over the weekend down to 1 per pot. This week is going to be focusing on Monsanto (Due Wednesday) and Phenome Poster (First draft by Friday).
+
+
+Thanks,
+Erin
+</pre>

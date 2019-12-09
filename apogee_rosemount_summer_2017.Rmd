@@ -1,0 +1,496 @@
+---
+title: "apogee_rosemount_summer_2017"
+author: "Erin Gilbert"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_float: True
+    toc_depth: 4
+    fig_retina: 2
+    number_sections: False
+    highlight: zenburn
+    theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+require(DT)
+require(raster)
+require(rgdal)
+require(EBImage)
+require(rjson)
+```
+
+
+# SDS Rosemount
+This RMarkdown generated principle components for data collected on the Apogee handheld 
+
+Planting notes:
+SDS Inoculated at planting
+Substrate in seed packets
+
+##Experimental Setup {.tabset}
+
+### Plot Experimental Design
+```{r loading_files_into_dataframe}
+
+
+#setwd("/Volumes/CFANS/") 
+directory<-"/Volumes//hirsch_lab/projects/soybean/sds_bsr/apogee/a8/raw"
+files<-list.files(directory) #get all names in file
+
+###Experiment info
+experiment_info<-t(data.frame(strsplit(files, split="-")))
+row.names(experiment_info)=NULL
+#experiment_info<-experiment_info[,-ncol(experiment_info)]
+colnames(experiment_info)<-unlist(strsplit(experiment_info[1,], split="_"))[seq(1,ncol(experiment_info)*2,2)]
+#experiment_info<-experiment_info[,-ncol(experiment_info)]
+experiment_info<-as.data.frame(apply(experiment_info, 2, function(x) unlist(strsplit(x,split="_")))[seq(2,nrow(experiment_info)*2,2),])
+#experiment_info<-experiment_info[-1,]
+
+# #Combining data
+# apogee_transmission_readings<-read.table(paste(directory, files[1], sep=""), header = F, skip=3)
+# 
+# for(i in 2:length(files))
+# {
+#   temp<-read.table(paste(directory,files[i], sep=""), header=F, skip=3)
+#   apogee_transmission_readings<-cbind(apogee_transmission_readings, temp[,2])
+#  
+# }
+# 
+# names(apogee_transmission_readings)<-c("Wavelength", paste(experiment_info$Plot, experiment_info$Leaf, sep="_"))
+# 
+# 
+# 
+# #clean up data
+# apogee_transmission_readings<-subset(apogee_transmission_readings, Wavelength>400 & Wavelength<1200)
+# #apogee_transmission_readings<-apogee_transmission_readings[,-unique(which(apogee_transmission_readings>150, arr.ind = T)[,2])[-1]]
+# apogee_transmission_readings<-t(apogee_transmission_readings)[-1,]
+
+apogee_transmission_readings<-read.csv("~/Desktop/apogee.csv")
+apogee_transmission_readings_backup<-apogee_transmission_readings
+#experiment_info<-experiment_info[which(experiment_info$Plot %in% as.data.frame(strsplit(paste(experiment_info$Plot, experiment_info$Leaf, sep="_"), split="_"), stringsAsFactors=F)[1,]),]
+experiment_info$Leaf<-gsub('.TRM|1|2|3','',experiment_info$Leaf)
+experiment_info_backup<-experiment_info
+
+
+
+#experiment_info["means"]<-colMeans(apogee_transmission_readings[,-1])
+
+unik<-!duplicated(experiment_info$Plot)
+experiment_info_reduced<-experiment_info[unik,]
+experiment_info_reduced<-experiment_info_reduced[,1:6]
+
+datatable(experiment_info_reduced)
+
+```
+
+### Readings Log
+
+```{r rsmnt_readings_info}
+
+datatable(experiment_info)
+```
+
+
+##Principle components on leaves
+
+
+###PCs All leaves by inoculation status {.tabset}
+PLOTS SHOW PC1xPC2 and PC3&PC4 FOR EACH DAY 
+
+Uninoculated = Blue | Inoculated= Orange
+
+
+####MINNSOY
+```{r rsmnt_pc_minnsoy_trt, fig.align='center'}
+apogee_transmission_readings<-apogee_transmission_readings_backup
+genotype=unique(experiment_info$Genotype)[1] ##change the number for the genotype you want
+#unique(experiment_info$Genotype) = Minnsoy Noir    McCall  MN1606  Ag2107 MN1410 
+for (plot_day in sort(as.numeric(as.character(unique(experiment_info$PictureDay)))))
+{
+
+apogee_transmission_readings_plot<-as.data.frame(apogee_transmission_readings[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype == genotype),])
+if  (nrow(apogee_transmission_readings_plot)>1){ #if there is more than 1 reading
+# curve_areas_means<-NULL
+# for(i in 1:ncol(apogee_transmission_readings_means_plot))
+# {
+# curve_areas_means<-cbind(curve_areas_means, diff(apogee_transmission_readings_means_plot[,i])/diff(apogee_transmission_readings_means_plot_day[,1]))
+# }
+
+pca_plot_mean<-prcomp(apogee_transmission_readings_plot)
+
+
+#par(mfrow=c(4,1))
+# plots_for_plot_day<-sort(unique(unlist(strsplit(names(apogee_transmission_readings_means_plot_day)[grep(paste("_", plot_day, sep=""),names(apogee_transmission_readings_means_plot_day))], split = "_"))))[-1]
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1) #if there was enough data to generate at least 2 PCs
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"All Leaves per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3) #if PC 3 and 4 are there
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"All Leaves per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+```
+
+####NOIR
+```{r rsmnt_pc_noir_trt, fig.align='center'}
+apogee_transmission_readings<-apogee_transmission_readings_backup
+genotype=unique(experiment_info$Genotype)[2] ##change the number for the genotype you want
+#unique(experiment_info$Genotype) = Minnsoy Noir    McCall  MN1606  Ag2107 MN1410 
+for (plot_day in sort(as.numeric(as.character(unique(experiment_info$PictureDay)))))
+{
+
+apogee_transmission_readings_plot<-as.data.frame(apogee_transmission_readings[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype == genotype),])
+if  (nrow(apogee_transmission_readings_plot)>1){ #if there is more than 1 reading
+# curve_areas_means<-NULL
+# for(i in 1:ncol(apogee_transmission_readings_means_plot))
+# {
+# curve_areas_means<-cbind(curve_areas_means, diff(apogee_transmission_readings_means_plot[,i])/diff(apogee_transmission_readings_means_plot_day[,1]))
+# }
+
+pca_plot_mean<-prcomp(apogee_transmission_readings_plot)
+
+
+#par(mfrow=c(4,1))
+# plots_for_plot_day<-sort(unique(unlist(strsplit(names(apogee_transmission_readings_means_plot_day)[grep(paste("_", plot_day, sep=""),names(apogee_transmission_readings_means_plot_day))], split = "_"))))[-1]
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1) #if there was enough data to generate at least 2 PCs
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"All Leaves per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3) #if PC 3 and 4 are there
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"All Leaves per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+```
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1) #if there was enough data to generate at least 2 PCs
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"All Leaves per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3) #if PC 3 and 4 are there
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"All Leaves per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+```
+
+####MN1606
+```{r rsmnt_pc_mn1606_trt, fig.align='center'}
+apogee_transmission_readings<-apogee_transmission_readings_backup
+genotype=unique(experiment_info$Genotype)[4] ##change the number for the genotype you want
+#unique(experiment_info$Genotype) = Minnsoy Noir    McCall  MN1606  Ag2107 MN1410 
+for (plot_day in sort(as.numeric(as.character(unique(experiment_info$PictureDay)))))
+{
+
+apogee_transmission_readings_plot<-as.data.frame(apogee_transmission_readings[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype == genotype),])
+if  (nrow(apogee_transmission_readings_plot)>1){ #if there is more than 1 reading
+# curve_areas_means<-NULL
+# for(i in 1:ncol(apogee_transmission_readings_means_plot))
+# {
+# curve_areas_means<-cbind(curve_areas_means, diff(apogee_transmission_readings_means_plot[,i])/diff(apogee_transmission_readings_means_plot_day[,1]))
+# }
+
+pca_plot_mean<-prcomp(apogee_transmission_readings_plot)
+
+
+#par(mfrow=c(4,1))
+# plots_for_plot_day<-sort(unique(unlist(strsplit(names(apogee_transmission_readings_means_plot_day)[grep(paste("_", plot_day, sep=""),names(apogee_transmission_readings_means_plot_day))], split = "_"))))[-1]
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1) #if there was enough data to generate at least 2 PCs
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"All Leaves per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3) #if PC 3 and 4 are there
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"All Leaves per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+```
+
+####AG2107
+```{r rsmnt_pc_ag2107_trt, fig.align='center'}
+apogee_transmission_readings<-apogee_transmission_readings_backup
+genotype=unique(experiment_info$Genotype)[5] ##change the number for the genotype you want
+#unique(experiment_info$Genotype) = Minnsoy Noir    McCall  MN1606  Ag2107 MN1410 
+for (plot_day in sort(as.numeric(as.character(unique(experiment_info$PictureDay)))))
+{
+
+apogee_transmission_readings_plot<-as.data.frame(apogee_transmission_readings[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype == genotype),])
+if  (nrow(apogee_transmission_readings_plot)>1){ #if there is more than 1 reading
+# curve_areas_means<-NULL
+# for(i in 1:ncol(apogee_transmission_readings_means_plot))
+# {
+# curve_areas_means<-cbind(curve_areas_means, diff(apogee_transmission_readings_means_plot[,i])/diff(apogee_transmission_readings_means_plot_day[,1]))
+# }
+
+pca_plot_mean<-prcomp(apogee_transmission_readings_plot)
+
+
+#par(mfrow=c(4,1))
+# plots_for_plot_day<-sort(unique(unlist(strsplit(names(apogee_transmission_readings_means_plot_day)[grep(paste("_", plot_day, sep=""),names(apogee_transmission_readings_means_plot_day))], split = "_"))))[-1]
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1) #if there was enough data to generate at least 2 PCs
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"All Leaves per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3) #if PC 3 and 4 are there
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"All Leaves per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+```
+
+
+####MN1410
+```{r rsmnt_pc_mn1410_trt, fig.align='center'}
+apogee_transmission_readings<-apogee_transmission_readings_backup
+genotype=unique(experiment_info$Genotype)[6] ##change the number for the genotype you want
+#unique(experiment_info$Genotype) = Minnsoy Noir    McCall  MN1606  Ag2107 MN1410 
+for (plot_day in sort(as.numeric(as.character(unique(experiment_info$PictureDay)))))
+{
+
+apogee_transmission_readings_plot<-as.data.frame(apogee_transmission_readings[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype == genotype),])
+if  (nrow(apogee_transmission_readings_plot)>1){ #if there is more than 1 reading
+# curve_areas_means<-NULL
+# for(i in 1:ncol(apogee_transmission_readings_means_plot))
+# {
+# curve_areas_means<-cbind(curve_areas_means, diff(apogee_transmission_readings_means_plot[,i])/diff(apogee_transmission_readings_means_plot_day[,1]))
+# }
+
+pca_plot_mean<-prcomp(apogee_transmission_readings_plot)
+
+
+#par(mfrow=c(4,1))
+# plots_for_plot_day<-sort(unique(unlist(strsplit(names(apogee_transmission_readings_means_plot_day)[grep(paste("_", plot_day, sep=""),names(apogee_transmission_readings_means_plot_day))], split = "_"))))[-1]
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1) #if there was enough data to generate at least 2 PCs
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"All Leaves per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3) #if PC 3 and 4 are there
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"All Leaves per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+```
+
+###PCs Midleaf by inoculation status {.tabset}
+PLOTS SHOW PC1xPC2 and PC3&PC4 FOR EACH DAY 
+
+Uninoculated = Blue |  Inoculated= Orange
+
+
+#### MINNSOY
+```{r rsmnt_pc_mid_minnsoy_trt, fig.align='center'}
+apogee_transmission_readings<-apogee_transmission_readings_backup[which(experiment_info_backup$Leaf=="C"),]
+genotype=unique(experiment_info$Genotype)[1] ##change the number for the genotype you want
+#unique(experiment_info$Genotype) = Minnsoy Noir    McCall  MN1606  Ag2107 MN1410 
+experiment_info<-experiment_info_backup[which(experiment_info$Leaf=="C"),]
+
+for (plot_day in sort(as.numeric(as.character(unique(experiment_info$PictureDay)))))
+{
+
+apogee_transmission_readings_plot<-as.data.frame(apogee_transmission_readings[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype == genotype),])
+if  (nrow(apogee_transmission_readings_plot)>1){
+# curve_areas_means<-NULL
+# for(i in 1:ncol(apogee_transmission_readings_means_plot))
+# {
+# curve_areas_means<-cbind(curve_areas_means, diff(apogee_transmission_readings_means_plot[,i])/diff(apogee_transmission_readings_means_plot_day[,1]))
+# }
+
+pca_plot_mean<-prcomp(apogee_transmission_readings_plot)
+
+
+#par(mfrow=c(4,1))
+# plots_for_plot_day<-sort(unique(unlist(strsplit(names(apogee_transmission_readings_means_plot_day)[grep(paste("_", plot_day, sep=""),names(apogee_transmission_readings_means_plot_day))], split = "_"))))[-1]
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1)
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"Midleaf per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3)
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"Midleaf per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+experiment_info<-experiment_info_backup
+```
+
+#### Noir
+```{r rsmnt_pc_mid_noir_trt, fig.align='center'}
+apogee_transmission_readings<-apogee_transmission_readings_backup[which(experiment_info$Leaf=="C"),]
+genotype=unique(experiment_info$Genotype)[2] ##change the number for the genotype you want
+#unique(experiment_info$Genotype) = Minnsoy Noir    McCall  MN1606  Ag2107 MN1410 
+experiment_info<-experiment_info_backup[which(experiment_info$Leaf=="C"),]
+
+for (plot_day in sort(as.numeric(as.character(unique(experiment_info$PictureDay)))))
+{
+
+apogee_transmission_readings_plot<-as.data.frame(apogee_transmission_readings[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype == genotype),])
+if  (nrow(apogee_transmission_readings_plot)>1){
+# curve_areas_means<-NULL
+# for(i in 1:ncol(apogee_transmission_readings_means_plot))
+# {
+# curve_areas_means<-cbind(curve_areas_means, diff(apogee_transmission_readings_means_plot[,i])/diff(apogee_transmission_readings_means_plot_day[,1]))
+# }
+
+pca_plot_mean<-prcomp(apogee_transmission_readings_plot)
+
+
+#par(mfrow=c(4,1))
+# plots_for_plot_day<-sort(unique(unlist(strsplit(names(apogee_transmission_readings_means_plot_day)[grep(paste("_", plot_day, sep=""),names(apogee_transmission_readings_means_plot_day))], split = "_"))))[-1]
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1)
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"Midleaf per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3)
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"Midleaf per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+experiment_info<-experiment_info_backup
+```
+
+
+#### MCCALL
+```{r rsmnt_pc_mid_mccall_trt, fig.align='center'}
+apogee_transmission_readings<-apogee_transmission_readings_backup[which(experiment_info$Leaf=="C"),]
+genotype=unique(experiment_info$Genotype)[3] ##change the number for the genotype you want
+#unique(experiment_info$Genotype) = Minnsoy Noir    McCall  MN1606  Ag2107 MN1410 
+experiment_info<-experiment_info_backup[which(experiment_info$Leaf=="C"),]
+
+for (plot_day in sort(as.numeric(as.character(unique(experiment_info$PictureDay)))))
+{
+
+apogee_transmission_readings_plot<-as.data.frame(apogee_transmission_readings[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype == genotype),])
+if  (nrow(apogee_transmission_readings_plot)>1){
+# curve_areas_means<-NULL
+# for(i in 1:ncol(apogee_transmission_readings_means_plot))
+# {
+# curve_areas_means<-cbind(curve_areas_means, diff(apogee_transmission_readings_means_plot[,i])/diff(apogee_transmission_readings_means_plot_day[,1]))
+# }
+
+pca_plot_mean<-prcomp(apogee_transmission_readings_plot)
+
+
+#par(mfrow=c(4,1))
+# plots_for_plot_day<-sort(unique(unlist(strsplit(names(apogee_transmission_readings_means_plot_day)[grep(paste("_", plot_day, sep=""),names(apogee_transmission_readings_means_plot_day))], split = "_"))))[-1]
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1)
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"Midleaf per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3)
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"Midleaf per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+experiment_info<-experiment_info_backup
+```
+
+
+#### MN1606
+```{r rsmnt_pc_mid_mn1606_trt, fig.align='center'}
+apogee_transmission_readings<-apogee_transmission_readings_backup[which(experiment_info$Leaf=="C"),]
+genotype=unique(experiment_info$Genotype)[4] ##change the number for the genotype you want
+#unique(experiment_info$Genotype) = Minnsoy Noir    McCall  MN1606  Ag2107 MN1410 
+experiment_info<-experiment_info_backup[which(experiment_info$Leaf=="C"),]
+
+for (plot_day in sort(as.numeric(as.character(unique(experiment_info$PictureDay)))))
+{
+
+apogee_transmission_readings_plot<-as.data.frame(apogee_transmission_readings[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype == genotype),])
+if  (nrow(apogee_transmission_readings_plot)>1){
+# curve_areas_means<-NULL
+# for(i in 1:ncol(apogee_transmission_readings_means_plot))
+# {
+# curve_areas_means<-cbind(curve_areas_means, diff(apogee_transmission_readings_means_plot[,i])/diff(apogee_transmission_readings_means_plot_day[,1]))
+# }
+
+pca_plot_mean<-prcomp(apogee_transmission_readings_plot)
+
+
+#par(mfrow=c(4,1))
+# plots_for_plot_day<-sort(unique(unlist(strsplit(names(apogee_transmission_readings_means_plot_day)[grep(paste("_", plot_day, sep=""),names(apogee_transmission_readings_means_plot_day))], split = "_"))))[-1]
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1)
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"Midleaf per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3)
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"Midleaf per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+experiment_info<-experiment_info_backup
+```
+
+
+#### AG2107
+```{r rsmnt_pc_mid_ag2107_trt, fig.align='center'}
+apogee_transmission_readings<-apogee_transmission_readings_backup[which(experiment_info$Leaf=="C"),]
+genotype=unique(experiment_info$Genotype)[5] ##change the number for the genotype you want
+#unique(experiment_info$Genotype) = Minnsoy Noir    McCall  MN1606  Ag2107 MN1410 
+experiment_info<-experiment_info_backup[which(experiment_info$Leaf=="C"),]
+
+for (plot_day in sort(as.numeric(as.character(unique(experiment_info$PictureDay)))))
+{
+
+apogee_transmission_readings_plot<-as.data.frame(apogee_transmission_readings[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype == genotype),])
+if  (nrow(apogee_transmission_readings_plot)>1){
+# curve_areas_means<-NULL
+# for(i in 1:ncol(apogee_transmission_readings_means_plot))
+# {
+# curve_areas_means<-cbind(curve_areas_means, diff(apogee_transmission_readings_means_plot[,i])/diff(apogee_transmission_readings_means_plot_day[,1]))
+# }
+
+pca_plot_mean<-prcomp(apogee_transmission_readings_plot)
+
+
+#par(mfrow=c(4,1))
+# plots_for_plot_day<-sort(unique(unlist(strsplit(names(apogee_transmission_readings_means_plot_day)[grep(paste("_", plot_day, sep=""),names(apogee_transmission_readings_means_plot_day))], split = "_"))))[-1]
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1)
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"Midleaf per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3)
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"Midleaf per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+experiment_info<-experiment_info_backup
+```
+
+
+#### MN1410
+```{r rsmnt_pc_mid_mn1410_trt, fig.align='center'}
+apogee_transmission_readings<-apogee_transmission_readings_backup[which(experiment_info$Leaf=="C"),]
+genotype=unique(experiment_info$Genotype)[6] ##change the number for the genotype you want
+#unique(experiment_info$Genotype) = Minnsoy Noir    McCall  MN1606  Ag2107 MN1410 
+experiment_info<-experiment_info_backup[which(experiment_info$Leaf=="C"),]
+
+for (plot_day in sort(as.numeric(as.character(unique(experiment_info$PictureDay)))))
+{
+
+apogee_transmission_readings_plot<-as.data.frame(apogee_transmission_readings[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype == genotype),])
+if  (nrow(apogee_transmission_readings_plot)>1){
+# curve_areas_means<-NULL
+# for(i in 1:ncol(apogee_transmission_readings_means_plot))
+# {
+# curve_areas_means<-cbind(curve_areas_means, diff(apogee_transmission_readings_means_plot[,i])/diff(apogee_transmission_readings_means_plot_day[,1]))
+# }
+
+pca_plot_mean<-prcomp(apogee_transmission_readings_plot)
+
+
+#par(mfrow=c(4,1))
+# plots_for_plot_day<-sort(unique(unlist(strsplit(names(apogee_transmission_readings_means_plot_day)[grep(paste("_", plot_day, sep=""),names(apogee_transmission_readings_means_plot_day))], split = "_"))))[-1]
+
+clr<-c("blue", "orange")
+if(ncol(pca_plot_mean$x) >1)
+{plot(pca_plot_mean$x[,1], pca_plot_mean$x[,2], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 1&2", genotype,"Midleaf per Plot Day", plot_day), xlab="PC1", ylab="PC2", pch=20)}
+if(ncol(pca_plot_mean$x) >3)
+{plot(pca_plot_mean$x[,3], pca_plot_mean$x[,4], col=clr[as.numeric(experiment_info$Treatment[which(experiment_info$PictureDay==plot_day & experiment_info$Genotype ==genotype)])], main=paste("PC 3&4", genotype,"Midleaf per Plot Day", plot_day), xlab="PC3", ylab="PC4", pch=20)}
+#legend("bottomleft",legend=c("uninoc", "inoc"), col=c("orange", "blue"), pch=19)#colorbyinoculationstatus
+}
+}
+experiment_info<-experiment_info_backup
+```

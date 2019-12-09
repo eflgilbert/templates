@@ -1,0 +1,449 @@
+---
+title: "Morex Project | `r format(Sys.time(), '%m.%d.%Y')`"
+author: |
+    Erin Gilbert  
+    University of Minnesota | Department of Plant Pathology
+abstract: |
+    The following notes are for Hirsch's lab portion of the morex mutagenisis project. Morex lines that had been chamically mutagenized were scanned with the middleton hyperspectral setup in the Stakman 417 lab. 
+output:
+  html_document:
+    code_folding: hide
+    toc: yes
+    toc_float: True
+    toc_depth: 4
+    fig_retina: 2
+    number_sections: False
+    highlight: pygments
+    theme: cosmo
+---
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo=TRUE, warning=FALSE, message=FALSE, collapse=TRUE)
+require(raster)
+require(rgdal)
+require(EBImage)
+require(rjson)
+require(foreach)
+```
+
+<style type="text/css">
+
+body{ /* Normal  */
+   font-size: 14px;
+}
+td {  /* Table  */
+   font-size: 14px;
+}
+h1 { /* Header 1 */
+ font-size: 28px;
+ color: DarkBlue;
+}
+h2 { /* Header 2 */
+ font-size: 24px;
+ color: DarkBlue;
+}
+h3 { /* Header 3 */
+ font-size: 20px;
+ color: DarkBlue;
+}
+code.r{ /* Code block */
+  font-size: 12px;
+}
+pre { /* Code block */
+  font-size: 12px
+}
+</style>
+
+## Scanning Samples
+
+126 pots were scanned, each with 1-3 plants in them.
+
+```{r line_info}
+experiment_info<-read.csv(file="/Volumes/hirsch_lab-2/projects/barley/morex_mutagenisis/peter_barley_info.csv", header=T, stringsAsFactors = F)
+library(DT)
+datatable(experiment_info)
+```
+
+## Output example
+This is the first scan taken and will be used to demonstrate how the 
+
+```{r load_and_qc_hyperpec}
+#load in files
+check_stack_dark<-stack("/Volumes/hirsch_lab-2/projects/barley/morex_mutagenisis/hyperspec/092117/morex_092117_dark.raw")
+check_stack_white<-stack("/Volumes/hirsch_lab-2/projects/barley/morex_mutagenisis/hyperspec/092117/morex_092117_white.raw")
+rawfile<-"/Volumes/hirsch_lab-2/projects/barley/morex_mutagenisis/hyperspec/092117/morex_092117_Pots_1-2-3.raw"
+hyperspec_stack_raw<-stack(rawfile)
+
+#normalize values with dark and white standards
+hyperspec_stack_normalized<-hyperspec_stack_raw
+hyperspec_stack_normalized_scaled01<-NULL
+# for (n in 1:length((hyperspec_stack_normalized@layers)))
+# {
+#   hyperspec_stack_normalized[[n]]<-(hyperspec_stack_raw[[n]]-cellStats(check_stack_dark[[n]], stat='mean', na.rm=T))/(cellStats(check_stack_white[[n]], stat='mean', na.rm=T)-cellStats(check_stack_dark[[n]], stat='mean', na.rm=T))
+# }
+
+# foreach(n =1:length((hyperspec_stack_normalized@layers))) %do% {
+#   hyperspec_stack_normalized[[n]]<-(hyperspec_stack_raw[[n]]-cellStats(check_stack_dark[[n]], stat='mean', na.rm=T))/(cellStats(check_stack_white[[n]], stat='mean', na.rm=T)-cellStats(check_stack_dark[[n]], stat='mean', na.rm=T))
+# }
+wavelengths<-na.omit(as.numeric(unlist(strsplit(names(hyperspec_stack_raw), split = "X")))) #standardize wavelengths
+names(hyperspec_stack_normalized)<-trunc(wavelengths)
+
+
+```
+
+
+```{r 3dplots, echo=FALSE, eval=FALSE}
+foreach (i=1:length(hyperspec_stack_normalized@layers)) %do% {
+#making all of the images for each wavelength
+png(paste(hyperspec_stack_normalized[[i]]@data@names, ".png", sep=""))
+par(mfrow=c(1,2))
+plot(hyperspec_stack_normalized[[i]], col=gray.colors(15), main=paste(unlist(strsplit(hyperspec_stack_normalized[[i]]@data@names, "X"))[2], " nm"), xaxt='n', yaxt='n', legend=FALSE)
+persp(hyperspec_stack_normalized[[i]], phi=45,  shade=0.6,col="#98FB00", border=NA, zlab="intensity", main=paste(unlist(strsplit(hyperspec_stack_normalized[[i]]@data@names, "X"))[2], "nm"), axes=F, scale=F)
+dev.off()
+}
+```
+
+
+```{bash makethe3dgif, warnings=FALSE, eval=FALSE}
+#make the .gif
+#ls -rtm individual_wavelength_images_green/*.png\| tr -s  ',  ' ' ' | tr -s ' \n' ' '|\
+# for f in *X1*.png; do mv -- "$f" "${f//X/}"; done
+#for f in *X*.png; do mv -- "$f" "${f//X/0}"; done
+convert -delay 10 -loop 0 *png morex_hyperspec_3d.gif
+```
+<center>![](/Volumes/hirsch_lab-2/projects/barley/morex_mutagenisis/hyperspec/wavelength_images/morex_hyperspec_3d.gif)
+
+## Testing mask
+
+First, it must be determined if our standard masking protocol works for barley. NDVI+PRI is used to entire plant. The background is then filtered and plants automatically identified and color coded.
+
+NDVI picks up green leaf tissue and is calculated using a ratio of wavelength data:
+$$\frac{NIR - Red}{NIR + Red} = \frac{800nm - 670nm}{800nm+670nm}$$
+
+PRI picks up dried (yellow) leaf tissue and is calculated using a ratio of wavelength data:
+$$\frac{570nm - 531nm}{570nm+531nm}$$
+```{r mask_test}
+#R-NDVI detects plant material
+ndvi_red<-(hyperspec_stack_normalized$X800-hyperspec_stack_normalized$X670)/(hyperspec_stack_normalized$X800+hyperspec_stack_normalized$X670)
+#display(as.array(ndvi_red))
+pri<-(hyperspec_stack_normalized$X570-hyperspec_stack_normalized$X531)/(hyperspec_stack_normalized$X570+hyperspec_stack_normalized$X531)
+#display(as.array(pri))
+ndvi_pri<-ndvi_red+pri
+display(as.array(ndvi_pri))
+ndvi_pri_label<-thresh(as.array(ndvi_pri), w=300, h=300, offset=0.3)
+#display(ndvi_pri_label)
+ndvi_pri_bwlabel<-bwlabel(closing(ndvi_pri_label))
+ndvi_pri_bwlabel_table<-sort(table(ndvi_pri_bwlabel), decreasing = TRUE)
+#display(ndvi_pri_bwlabel, all=TRUE)
+final_filter_ndvi_pri<-rmObjects(ndvi_pri_bwlabel,as.numeric(names(ndvi_pri_bwlabel_table))[(sum(ndvi_pri_bwlabel_table>10000)+1):length(names(ndvi_pri_bwlabel_table))], reenumerate = TRUE)
+display(final_filter_ndvi_pri)
+
+#fill the plants in with colors
+#plant_colors<-sample(rainbow((length(table(final_filter))-1)*sample(c(3:10),size=1)), size=(length(table(final_filter))-1))
+plant_colors<-rainbow(length(table(final_filter_ndvi_pri))-1)
+colored_filter<-toRGB(final_filter_ndvi_pri)
+for(c in 1:(length(table(colored_filter))-1))
+{colored_filter<-floodFill(colored_filter, which(colored_filter==c, arr.ind = TRUE)[1,1:2], plant_colors[c])}
+display(colored_filter)
+
+```
+
+## Extracting all Pots
+
+Data for each plot was extracted and put into JSON files on MSI. 
+
+in shell:
+```{bash download_packages, eval=FALSE}
+# on MSI
+cd /home/hirschc3/gilbe952/source/R/RPackages
+wget https://cran.r-project.org/src/contrib/sp_1.2-5.tar.gz
+wget https://cran.r-project.org/src/contrib/Rcpp_0.12.13.tar.gz
+wget https://cran.r-project.org/src/contrib/rgdal_1.2-11.tar.gz
+wget http://bioconductor.org/packages/release/bioc/src/contrib/EBImage_4.18.2.tar.gz
+wget https://bioconductor.org/packages/release/bioc/src/contrib/BiocGenerics_0.22.0.tar.gz
+wget https://cran.r-project.org/src/contrib/abind_1.4-5.tar.gz
+wget https://cran.r-project.org/src/contrib/tiff_0.1-5.tar.gz
+wget https://cran.r-project.org/src/contrib/png_0.1-7.tar.gz
+wget https://cran.rstudio.com/src/contrib/locfit_1.5-9.1.tar.gz
+module load fftw/3.3.6-double-intel-2016-update3
+wget https://cran.rstudio.com/src/contrib/fftwtools_0.9-8.tar.gz
+wget https://cran.r-project.org/src/contrib/jpeg_0.1-8.tar.gz
+module load proj/4.9.3
+module load gdal
+wget https://cran.r-project.org/src/contrib/foreach_1.4.3.tar.gz
+wget https://cran.r-project.org/src/contrib/iterators_1.0.8.tar.gz
+wget https://cran.r-project.org/src/contrib/iterators_1.0.8.tar.gz
+```
+
+
+
+```{r install_packages, eval=FALSE}
+# In R on MSI
+##MUST INSTALL IN THIS ORDER
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/rjson_0.2.15.tar.gz")
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/sp_1.2-5.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/Rcpp_0.12.13.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/raster_2.5-8.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/rgdal_1.2-11.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/BiocGenerics_0.22.0.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/abind_1.4-5.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/jpeg_0.1-8.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/tiff_0.1-5.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+#module fftw/3.3.6-double-intel-2016-update3 must be loaded for next one
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/fftwtools_0.9-8.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/EBImage_4.18.2.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+#modules proj/4.9.3 and gdal must be loaded before next one
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/rgdal_1.2-11.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux", configure.args=c('--with-proj-include=/panfs/roc/msisoft/proj/4.9.3/include','--with-proj-lib=/panfs/roc/msisoft/proj/4.9.3/lib'))
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/iterators_1.0.8.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/foreach_1.4.3.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux")
+```
+
+bash script to run:
+```{bash shell_subscriber, eval=FALSE}
+
+#!/bin/bash
+
+#PBS -l walltime=02:00:00,nodes=1:ppn=24
+#PBS -o /home/hirschc3/gilbe952/morex/hyperspec_test.out
+#PBS -e /home/hirschc3/gilbe952/morex/hyperspec_test.err
+#PBS -V
+#PBS -N morex_hyperspec_test
+#PBS -M gilbe952@umn.edu
+#PBS -m abe
+#PBS -r n
+
+
+# qsub -t 1-54 -v LIST=sampleList.txt /home/hirschc3/gilbe952/morex/hyperspec_single.sh
+
+#set working directory
+cd /home/hirschc3/gilbe952/morex
+
+#load modules
+module load R/3.4.0
+module load proj/4.9.3
+module load gdal
+module load fftw/3.3.6-double-intel-2016-update3
+
+
+Rscript morex_hyperspec_extraction.R peter_barley_info.csv morex_092117_dark.raw morex_092117_white.raw ${LIST}
+
+```
+
+
+
+
+
+```{r hyperspectral_object_extraction, eval=FALSE}
+#/home/hirschc3/gilbe952/morex/morex_hyperspec_extraction.R
+
+install.packages("/home/hirschc3/gilbe952/source/R/RPackages/rgdal_1.2-11.tar.gz", repos = NULL, type="source", INSTALL_opts = c('--no-lock'), lib = "/home/hirschc3/gilbe952/source/R/Linux", configure.args=c('--with-proj-include=/panfs/roc/msisoft/proj/4.9.3/include','--with-proj-lib=/panfs/roc/msisoft/proj/4.9.3/lib'))
+
+require(sp, lib.loc="/home/hirschc3/gilbe952/source/R/Linux")
+require(raster, lib.loc="/home/hirschc3/gilbe952/source/R/Linux")
+require(rgdal, lib.loc="/home/hirschc3/gilbe952/source/R/Linux")
+require(EBImage, lib.loc="/home/hirschc3/gilbe952/source/R/Linux")
+require(rjson, lib.loc="/home/hirschc3/gilbe952/source/R/Linux")
+require(foreach, lib.loc="/home/hirschc3/gilbe952/source/R/Linux")
+
+print("libraries loaded")
+###rscript hyperspec_extraction.R info_file white dark raw_file_no.raw
+###Get different dates
+setwd("/home/hirschc3/gilbe952/morex")
+args<-c("peter_barley_info.csv", "morex_092117_dark.raw", "morex_092117_white.raw", "morex_092117_Pots_100-101-102.raw")
+args <- commandArgs(trailingOnly = TRUE)
+info_file<-read.csv(args[1], header=T, stringsAsFactors=F)
+
+check_stack_dark<-stack(args[2])
+check_stack_white<-stack(args[3])
+
+rawfile<- args[4]
+temp2<-strsplit(rawfile, "\\.")[[1]][1]
+temp3<-strsplit(temp2, "_")
+plot_labels<-strsplit(temp3[[1]][length(temp3[[1]])], "-")[[1]]
+plot_id<-info_file[which(info_file$HyperspecID %in% plot_labels),]
+
+hyperspec_stack_raw<-stack(rawfile)
+ print("raw files loaded")
+
+hyperspec_stack_normalized<-hyperspec_stack_raw
+wavelengths<-trunc(na.omit(as.numeric(unlist(strsplit(names(hyperspec_stack_raw), split = "X")))))
+names(hyperspec_stack_normalized)<-wavelengths
+print("stack normalized")
+ndvi_red<-(hyperspec_stack_normalized$X800-hyperspec_stack_normalized$X670)/(hyperspec_stack_normalized$X800+hyperspec_stack_normalized$X670)
+pri<-(hyperspec_stack_normalized$X570-hyperspec_stack_normalized$X530)/(hyperspec_stack_normalized$X570+hyperspec_stack_normalized$X530)
+
+ndvi_pri<-ndvi_red+pri
+ndvi_pri_label<-thresh(as.array(ndvi_pri), w=300, h=300, offset=0.3)
+ndvi_pri_bwlabel<-bwlabel(closing(ndvi_pri_label))
+ndvi_pri_bwlabel_table<-sort(table(ndvi_pri_bwlabel), decreasing = TRUE)
+final_filter_ndvi_pri<-rmObjects(ndvi_pri_bwlabel,as.numeric(names(ndvi_pri_bwlabel_table))[(sum(ndvi_pri_bwlabel_table>10000)+1):length(names(ndvi_pri_bwlabel_table))], reenumerate = TRUE)
+
+print("object identified")
+
+center_of_masses_for_plants<-computeFeatures.moment(final_filter_ndvi_pri)[,1:2]
+horizontal_midline<-(max(center_of_masses_for_plants[,2])+ min(center_of_masses_for_plants[,2]))
+print(center_of_masses)
+
+bottom_left<-names(which.min(center_of_masses_for_plants[names(which(center_of_masses_for_plants[,2]<horizontal_midline)),][,1]))
+bottom_left_object<-extract(hyperspec_stack_normalized, which(as.array(final_filter_ndvi_pri)==as.integer(bottom_left)))
+foreach (n=1:ncol(bottom_left_object), .inorder=FALSE) %do% {
+  bottom_left_object[,n]<-(bottom_left_object[,n]-cellStats(check_stack_dark[[n]], stat='mean', na.rm=T))/(cellStats(check_stack_white[[n]], stat='mean', na.rm=T)-cellStats(check_stack_dark[[n]], stat='mean', na.rm=T))}
+
+bottom_left_object_json<-NULL
+colnames(bottom_left_object)<-wavelengths
+bottom_left_object_json$internalid<-plot_id[1,1]
+bottom_left_object_json$plotnumber<-plot_id[1,2]
+bottom_left_object_json$packetid<-plot_id[1,3]
+bottom_left_object_json$mi<-plot_id[1,4]
+bottom_left_object_json$kern<-plot_id[1,5]
+bottom_left_object_json$phenotype<-plot_id[1,6]
+bottom_left_object_json$family<-plot_id[1,7]
+bottom_left_object_json$hyperspecid<-plot_id[1,8]
+bottom_left_object_json$coordinates<-as.list(data.frame(which(as.array(final_filter_ndvi_pri)==as.integer(bottom_left), arr.ind = T)))
+bottom_left_object_json$hyperspec<-as.list(data.frame(bottom_left_object))
+bottom_left_object_json<-toJSON(bottom_left_object_json, method="C")
+
+print("object 1 extracted")
+
+bottom_right<-names(which.max(center_of_masses_for_plants[names(which(center_of_masses_for_plants[,2]<horizontal_midline)),][,1]))
+bottom_right_object<-extract(hyperspec_stack_normalized, which(as.array(final_filter_ndvi_pri)==as.integer(bottom_right)))
+foreach (n=1:ncol(bottom_right_object), .inorder=FALSE) %do% {
+  bottom_right_object[,n]<-(bottom_right_object[,n]-cellStats(check_stack_dark[[n]], stat='mean', na.rm=T))/(cellStats(check_stack_white[[n]], stat='mean', na.rm=T)-cellStats(check_stack_dark[[n]], stat='mean', na.rm=T))}
+
+colnames(bottom_right_object)<-wavelengths
+bottom_right_object_json<-NULL
+bottom_right_object_json$internalid<-plot_id[3,1]
+bottom_right_object_json$plotnumber<-plot_id[3,2]
+bottom_right_object_json$packetid<-plot_id[3,3]
+bottom_right_object_json$mi<-plot_id[3,4]
+bottom_right_object_json$kern<-plot_id[3,5]
+bottom_right_object_json$phenotype<-plot_id[3,6]
+bottom_right_object_json$family<-plot_id[3,7]
+bottom_right_object_json$hyperspecid<-plot_id[3,8]
+bottom_right_object_json$coordinates<-as.list(data.frame(which(as.array(final_filter_ndvi_pri)==as.integer(bottom_right), arr.ind = T)))
+bottom_right_object_json$hyperspec<-as.list(data.frame(bottom_right_object))
+bottom_right_object_json<-toJSON(bottom_right_object_json, method="C")
+
+print("object 2 extracted")
+
+bottom_middle<-names(center_of_masses_for_plants[names(which(center_of_masses_for_plants[,2]<horizontal_midline)),][,1])[which(names(center_of_masses_for_plants[names(which(center_of_masses_for_plants[,2]<horizontal_midline)),][,1]) != bottom_left & names(center_of_masses_for_plants[names(which(center_of_masses_for_plants[,2]<horizontal_midline)),][,1]) != bottom_right)]
+print(bottom_middle)
+bottom_middle_object<-extract(hyperspec_stack_normalized, which(as.array(final_filter_ndvi_pri)==as.integer(bottom_middle)))
+foreach (n=1:ncol(bottom_middle_object), .inorder=FALSE) %do%{
+  bottom_middle_object[,n]<-(bottom_middle_object[,n]-cellStats(check_stack_dark[[n]], stat='mean', na.rm=T))/(cellStats(check_stack_white[[n]], stat='mean', na.rm=T)-cellStats(check_stack_dark[[n]], stat='mean', na.rm=T))}
+colnames(bottom_middle_object)<-wavelengths
+bottom_middle_object_json<-NULL
+bottom_middle_object_json$internalid<-plot_id[2,1]
+bottom_middle_object_json$plotnumber<-plot_id[2,2]
+bottom_middle_object_json$packetid<-plot_id[2,3]
+bottom_middle_object_json$mi<-plot_id[2,4]
+bottom_middle_object_json$kern<-plot_id[2,5]
+bottom_middle_object_json$phenotype<-plot_id[2,6]
+bottom_middle_object_json$family<-plot_id[2,7]
+bottom_middle_object_json$hyperspecid<-plot_id[2,8]
+bottom_middle_object_json$coordinates<-as.list(data.frame(which(as.array(final_filter_ndvi_pri)==as.integer(bottom_middle), arr.ind = T)))
+bottom_middle_object_json$hyperspec<-as.list(data.frame(bottom_middle_object))
+bottom_middle_object_json<-toJSON(bottom_middle_object_json, method="C")
+
+print("object 3 extracted")
+
+
+#try(lapply(bottom_left_object_json,write, paste(paste(paste(names(plot_id), plot_id[1,], sep="-"), collapse="_"),"json", sep="."), append=TRUE))
+#sink(paste(paste(paste(names(plot_id), plot_id[1,], sep="-"), collapse="_"),"txt", sep=".")) try(print(bottom_left_object_json)) sink()
+#try(lapply(bottom_middle_object_json, write, paste(paste(paste(names(plot_id), plot_id[2,], sep="-"), collapse="_"),"json", sep="."), append=TRUE))
+#sink(paste(paste(paste(names(plot_id), plot_id[2,], sep="-"), collapse="_"),"txt", sep="."))
+#try(print(bottom_middle_object_json))
+#sink()
+#try(lapply(bottom_right_object_json, write, paste(paste(paste(names(plot_id), plot_id[3,], sep="-"), collapse="_"),"json", sep="."), append = TRUE))
+#sink(paste(paste(paste(names(plot_id), plot_id[3,], sep="-"), collapse="_"),"txt", sep="."))
+#try(print(bottom_right_object_json))
+#sink()
+
+
+try(write(bottom_left_object_json, file= paste(paste(paste(names(plot_id), plot_id[1,], sep="-"), collapse="_"),"json", sep="."), append=T))
+try(write(bottom_middle_object_json, file= paste(paste(paste(names(plot_id), plot_id[2,], sep="-"), collapse="_"),"json", sep="."), append=T))
+try(write(bottom_right_object_json, file= paste(paste(paste(names(plot_id), plot_id[3,], sep="-"), collapse="_"),"json", sep="."), append = T))
+```
+
+## JSON Data Example {.tabset}
+
+###Single Pot
+```{r checking_json, }
+
+test_unjsoned<-fromJSON(file = "~/Desktop/InternalID-M01_PotNumber-1_PacketID-F2015-225-4_MI-na_Kern-15_Phen-na_Family-na_HyperspecID-1.json")
+palette(rainbow(100))
+ndvi_colors<-(unlist((test_unjsoned$hyperspec$X800-test_unjsoned$hyperspec$X680)/(test_unjsoned$hyperspec$X800+test_unjsoned$hyperspec$X680)))
+range01 <- function(x){((x-min(x))/(max(x)-min(x)))*1000}
+plot(test_unjsoned$coordinates$dim1, test_unjsoned$coordinates$dim2, pch=".", col="darkgreen", xaxt='n', yaxt='n', xlab="", ylab="", main="Mo1 Pot1 Silhouette")
+
+library(plotly)
+unjsoned_hyperspec_dataframe<-as.data.frame(test_unjsoned$hyperspec)
+plot_ly(data=unjsoned_hyperspec_dataframe, x=c(336:(336+579)),y=colMeans(unjsoned_hyperspec_dataframe), mode="lines") %>%
+  layout(title = 'M01 Pot 1 Wavelength Means', xaxis=list(title="Wavelength (nm)"), yaxis=list(title="Intensity"))
+
+
+```
+
+###Comparing Pots
+#### Shape and Wavelength Profiles
+```{r comparing_json}
+
+wildtype_unjsoned<-fromJSON(file = "~/Desktop/InternalID-M20_PotNumber-1_PacketID-S2015-925_MI-S2014-925_Kern-10_Phen-wild-type_Family-925_HyperspecID-58.json")
+yellowgreen_unjsoned<-fromJSON(file = "~/Desktop/InternalID-M21_PotNumber-1_PacketID-F2016-876_MI-S2014-2437_Kern-10_Phen-yellow-green_Family-2437_HyperspecID-61.json")
+smallleaf_unjsoned<-fromJSON(file = "~/Desktop/InternalID-M23_PotNumber-1_PacketID-S2015-6_MI-S2014-6_Kern-10_Phen-small-leaves_Family-6_HyperspecID-67.json")
+
+plot(wildtype_unjsoned$coordinates$dim1, wildtype_unjsoned$coordinates$dim2, pch=".", col="green", xaxt='n', yaxt='n', xlab="", ylab="", main="M20P1 Silhouette (Wildtype)")
+plot(yellowgreen_unjsoned$coordinates$dim1, yellowgreen_unjsoned$coordinates$dim2, pch=".", col="yellowgreen", xaxt='n', yaxt='n', xlab="", ylab="", main="M21P1 Silhouette (Yellow-Green)")
+plot(smallleaf_unjsoned$coordinates$dim1, smallleaf_unjsoned$coordinates$dim2, pch=".", col="black", xaxt='n', yaxt='n', xlab="", ylab="", main="M21P1 Silhouette (Small Leaf)")
+
+library(plotly)
+wildtype_wave_profile<-colMeans(as.data.frame(wildtype_unjsoned$hyperspec))
+yellowgreen_wave_profile<-colMeans(as.data.frame(yellowgreen_unjsoned$hyperspec))
+smallleaf_wave_profile<-colMeans(as.data.frame(smallleaf_unjsoned$hyperspec))
+wavelengths<-c(336:(336+579))
+all_wave_profiles<-as.data.frame(cbind(wavelengths, wildtype_wave_profile, yellowgreen_wave_profile, smallleaf_wave_profile))
+plot_ly(data=all_wave_profiles, x=~wavelengths,y=~wildtype_wave_profile, name="wildtype", type="scatter", mode="lines") %>%
+  add_trace(y=~yellowgreen_wave_profile, name="yellow-green", mode="lines")%>%
+  add_trace(y=~smallleaf_wave_profile, name="small-leaf", mode="lines")%>%
+  layout(title = 'Wavelength Means of Differing Phenotypes', xaxis=list(title="Wavelength (nm)"), yaxis=list(title="Intensity"))
+
+
+```
+
+
+
+
+####Indices
+
+
+Indices can be compared for each of the pots.
+
+NDVI picks up green leaf tissue and is calculated using a ratio of wavelength data:
+$$\frac{NIR - Red}{NIR + Red} = \frac{800nm - 670nm}{800nm+670nm}$$
+
+PRI picks up dried (yellow) leaf tissue and is calculated using a ratio of wavelength data:
+$$\frac{570nm - 531nm}{570nm+531nm}$$
+Modified Chlorophyll Absorption Ratio Index (MCARI) gives a better idea of clorophyll content:
+$$\frac{1.5 * [2.5(800nm-670nm)-1.3(800nm-550nm)]}{sqrt[(2*800nm +1)^2  - (6*800nm -5670nm) -0.5]}$$
+
+
+
+
+More info at: https://www.hindawi.com/journals/js/2017/1353691/
+```{r indices}
+phenotypes<-c("wildtype", "yellow-green", "small-leaf")
+X800_row<-which(all_wave_profiles$wavelengths==800)
+X670_row<-which(all_wave_profiles$wavelengths==670)
+X570_row<-which(all_wave_profiles$wavelengths==570)
+X531_row<-which(all_wave_profiles$wavelengths==531)
+X550_row<-which(all_wave_profiles$wavelengths==550)
+ndvi<-(all_wave_profiles[X800_row,]-all_wave_profiles[X670_row,])/(all_wave_profiles[X800_row,]+all_wave_profiles[X670_row,])
+pri<-(all_wave_profiles[X570_row,]-all_wave_profiles[X531_row,])/(all_wave_profiles[X570_row,]+all_wave_profiles[X531_row,])
+mcari<-(1.5*(2.5*(all_wave_profiles[X800_row,]-all_wave_profiles[X670_row,]) - 1.3*(all_wave_profiles[X800_row,]-all_wave_profiles[X550_row,])))/sqrt((2*all_wave_profiles[X800_row,]+1)^2 - (6*all_wave_profiles[X800_row,]-5*all_wave_profiles[X670_row,]) -0.5)
+indices_table<-cbind(c("NDVI","PRI", "MCARI"),rbind(ndvi, pri, mcari)[,-1])
+names(indices_table)<-c("Index", phenotypes)
+row.names(indices_table)<-NULL
+
+library(DT)
+datatable(indices_table)
+```
+
