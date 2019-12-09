@@ -6,7 +6,7 @@ This repository contains examples of project documentation and templates used to
 
 Most projects are tracked through an RMarkdown (RMD) document which outputs an HTML in order to view plots and tables more easily. HTMLs must be downloaded and opened in a browser. Rmd files can be viewed in this github repository, or may be downloaded and run in RStudio.
 
-### RMD Included
+### RMDs Included
 
 Apogee_rosemount_summer_2017 - Notes on a field experiment performed in Rosemount, MN in the summer of 2017. An apogee handheld hyperspectrometer was used to take measurements.
 
