@@ -19,11 +19,14 @@ Weekly_update_log_efg - a sample of weekly updates over the course of six months
 
 Most scripts start off as a copy of one of the below templates in order to 
 
-supercomputer submission shell script - In order to run a script on the UMN cluster, a shell script must be submitted. The template here includes metadata that should be sent to initialize the job as well as syntax for running R, Python, or MATLAB scripts.
+<b>supercomputer submission shell script</b> - In order to run a script on the UMN cluster, a shell script must be submitted. The template here includes metadata that should be sent to initialize the job as well as syntax for running R, Python, or MATLAB scripts.
 
-rmd (HTML)-
-rmd (Shiny) -
-Rscript -
-PERL - 
-MATLAB - 
-Python- 
+<b>rmd (HTML)</b>-
+
+<b>rmd (Shiny) </b>-
+
+<b>Rscript </b>-
+
+<b>MATLAB</b> - 
+
+<b>Python</b>- 
