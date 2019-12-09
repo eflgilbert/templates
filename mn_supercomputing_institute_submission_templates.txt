@@ -1,0 +1,96 @@
+#PBS -l walltime=00:30:00,pmem=2700mb,nodes=1:ppn=10
+#PBS -o /PATH/TO/OUTPUT/FILE
+#PBS -e /PATH/TO/ERROR/FILE
+#PBS -V
+#PBS -N JOB_NAME
+#PBS -M gilbe952@umn.edu
+#PBS -m abe
+#PBS -r n
+
+
+#################
+### R SCRIPT  ###
+#################
+
+### CMD USAGE ###
+#qsub -t 1-10 -v LIST=,ARGUMENT2=,ARGUMENT3= /home/hirschc3/gilbe952/sds_bsr/sds_object_finder.sh #USE THE -t WHEN RUNNING A TASK ARRAY
+
+
+## INSIDE SHELL SCRIPT ###
+module load R/3.4.0
+
+cd /PATH/TO/RSCRIPT/DIRECTORY
+SAMPLE=`/bin/sed -n ${PBS_ARRAYID}p ${LIST}` #USE THIS LINE IF SUBMITTING A TASK ARRAY
+
+
+Rscript /PATH/TO/RSCRIPT ${ARGUMENT2} ${ARGUMENT3} ${SAMPLE}
+
+# LIST OF JOBS SUBMITTED (KEEP COMMENTED OUT)
+#qsub -t 1-10 -v LIST=/home/hirschc3/gilbe952/sds_bsr/gc3_fall2017/X120717/gc3_X120717_sampleList.txt /home/hirschc3/gilbe952/sds_bsr/sds_object_finder.sh
+
+
+
+
+
+#################
+###MATLAB code###
+#################
+#REMEMBER TO INCLUDE FUNCTION SCRIPTS IN THE SAME DIRECTORY AS MATLAB SCRIPT
+
+### CMD USAGE ###
+qsub -t 1-10 -v LIST=,ARGUMENT2=,ARGUMENT3= /PATH/TO/SHELL/SCRIPT #USE THE -t WHEN RUNNING A TASK ARRAY
+
+## INSIDE SHELL SCRIPT ###
+module load matlab/R2017b
+cd /DIRECTORY/OF/MATLAB/SCRIPT
+SAMPLE=`/bin/sed -n ${PBS_ARRAYID}p ${ARGUMENT1}` #USE THIS LINE IF SUBMITTING A TASK ARRAY
+
+matlab -nodisplay  -r "maxNumCompThreads(1); function_name_no_suffix ${SAMPLE} ${ARGUMENT2} ${ARGUMENT3};quit force"
+
+
+# LIST OF JOBS SUBMITTED (KEEP COMMENTED OUT)
+#qsub -t 1-10 -v LIST=/home/hirschc3/gilbe952/sds_bsr/sds_bsr_backup/indoor/X102917/gc3_X102917_sampleList.txt,DARK=/home/hirschc3/gilbe952/sds_bsr/sds_bsr_backup/indoor/X102917/SDSGCr1_102917_dark.raw,WHITE=/home/hirschc3/gilbe952/sds_bsr/sds_bsr_backup/indoor/X102917/SDSGCr1_102917_white.raw /home/hirschc3/gilbe952/sds_bsr/matlab_object_id.sh
+
+
+
+
+############################
+### PYTHON (PLANTCV) code###
+############################
+#This code created a naive bayes model based on a given set of categorized rgb pixels. It then creates a mask for each of a list of tif images in a given directory.
+
+### CMD USAGE ###
+
+#find $PWD -type f -name "*.tif" > tif_sampleList.txt #USE THIS FOR RUNNING ANALYSIS ON MULTIPLE INPUT FILES
+#qsub -v ARGUMENT1=,ARGUMENT2= /PATH/TO/SHELLSCRIPT
+
+## INSIDE SHELL SCRIPT ###
+module load python
+
+#install the packages
+pip install --user --upgrade PACKAGE1
+pip install --user --upgrade PACKAGE2
+
+
+cd ARGUMENT2 #Go to directory with the tif files for the list
+find $PWD -type f -name "*.tif" > tif_sampleList.txt
+
+#get the naive bayes pdfs
+python ~/path/to/python/script naive_bayes_multiclass --file ${ARGUMENT1} --outfile naive_bayes_pdfs.txt --plots
+
+mkdir masks
+cd masks
+
+if(naive_bayes_pdfs.txt exists)
+#run the script that is going to create the masks for each image
+while read -r line
+do
+     name="$line"
+     python ~/path/to/mask/python/script $name ../naive_bayes_pdfs.txt
+
+done < tif_sampleList.txt
+else
+echo "Naive bayes training failed."
+
+# LIST OF JOBS SUBMITTED (KEEP COMMENTED OUT)
+#qsub -v ARGUMENT1=/scratch.global/gilbe952/sds_bsr_pixels/sdsbsrgc13_111618_pixels.txt,ARUMENT2=/home/hirschc3/gilbe952/sds_bsr/sds_bsr_backup/indoor/gc13_fall2018/X111618/ /home/hirschc3/gilbe952/scripts/soybean_sds_bsr_hyperspectral/msi/naive_bayes_masks.sh

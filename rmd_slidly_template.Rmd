@@ -1,0 +1,48 @@
+---
+title: "Title Here"
+author: "Erin Gilbert"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: 
+  slidy_presentation:
+    footer: "Erin Gilbert Committee Report"
+    font_adjustment: -1
+runtime:  shiny
+highlight:  zenburn
+theme:  flatly
+---
+
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+## Libraries for Common Slidly presentations
+library(doBy)
+library(DT)
+library(varhandle)
+library(pls)
+library(reshape2)
+library(gplots)
+library(RColorBrewer)
+library(raster)
+library(plotly)
+library(shiny)
+library(shinyWidgets)
+library(kableExtra)
+library(knitr)
+library(ggplot2)
+library(cluster)
+
+##Commonly Used Functions
+rep.col<-function(x,n){ #Repeat a row
+   matrix(rep(x,each=n), ncol=n, byrow=TRUE)
+}
+rep.row<-function(x,n){ #Repeat a column
+   matrix(rep(x,each=n),nrow=n)
+}
+rsq <- function (x, y) cor(x, y) ^ 2 # function to calculate R2
+calc_ndsi <- function (x, y) (x-y)/(x+y) # function to calculate NDSI
+norm_01<- function(x) (x-min(x))/(max(x)-min(x)) #Vector normalization function
+
+```
+
