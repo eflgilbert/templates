@@ -14,15 +14,12 @@ Notes_morex_project - a side project involving scanning barley accessions for an
 
 Weekly_update_log_efg - a sample of weekly updates over the course of six months sent to my PI
 
-### Report Samples
-
-Report to committee- 
-
-
 
 ## Templates 
 
 Most scripts start off as a copy of one of the below templates in order to 
+
+supercomputer submission shell script - In order to run a script on the UMN cluster, a shell script must be submitted. The template here includes metadata that should be sent to initialize the job as well as syntax for running R, Python, or MATLAB scripts.
 
 rmd (HTML)-
 rmd (Shiny) -
