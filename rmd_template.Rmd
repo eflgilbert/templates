@@ -17,6 +17,11 @@ output:
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
+
+install.packages("Package_Name")
+setwd("/Directory/Name/")
+
+
 #Commonly Used Packages
 require(DT)
 require(raster)
