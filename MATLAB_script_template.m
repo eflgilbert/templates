@@ -9,8 +9,10 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 %%  Define Environment  %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%
-
 %% list necessary function scripts in a comment here
+
+function script_name(Input1, Input2);
+
 
 %%%%%%%%%%%%%%%%%%%%%%%
 %% Define Functions %%
