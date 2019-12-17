@@ -19,11 +19,11 @@ Weekly_update_log_efg - a sample of weekly updates over the course of six months
 
 Most scripts start off as a copy of one of the below templates to maintain uniformity.
 
-<b>supercomputer submission shell script</b> - In order to run a script on the UMN cluster, a shell script must be submitted. The template here includes metadata that should be sent to initialize the job as well as syntax for running R, Python, or MATLAB scripts.
+<b>Supercomputer submission shell script</b> - In order to run a script on the UMN cluster, a shell script must be submitted. The template here includes metadata that should be sent to initialize the job as well as syntax for running R, Python, or MATLAB scripts.
 
-<b>rmd (HTML)</b>-
+<b>rmd (HTML)</b>- These are HTML reports of the RMarkdown files with the same name. These reports include images, tables, and plots as well as written notes.
 
-<b>rmd (Shiny) </b>-
+<b>rmd (Shiny/Slidly) </b>- A sample of an RShiny Markdown file that was written as a way to explore the possibility of having interactive plots/figures in a presentation.
 
-<b>Rscript/MATLAB/Python </b>-
+<b>Rscript/MATLAB/Python </b>- These files are used as starting points for most of the scripts written. This is to ensure all scripts have the same basic information and structure.
 
